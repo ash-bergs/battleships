@@ -1,0 +1,101 @@
+.container {
+    display: flex;
+}
+
+.grid-computer {
+    width: 400px; 
+    height: 400px; 
+    display: flex;
+    flex-wrap: wrap;
+    background-color: salmon;
+    margin: 20px;
+}
+
+.grid-user {
+    width: 400px; 
+    height: 400px; 
+    display: flex;
+    flex-wrap: wrap;
+    background-color: blue;
+    margin: 20px;
+}
+
+.grid-display {
+    width: 400px; 
+    height: 400px; 
+    margin: 20px; 
+    background-color: yellowgreen;
+}
+
+.grid div {
+    width: 40px; 
+    height: 40px; 
+    /*background-color: goldenrod;*/
+}
+
+/* SHIPS */
+
+.destroyer-container {
+    width: 80px; 
+    height: 40px; 
+    display: flex;
+    margin: 10px;
+    background-color: turquoise;
+}
+
+.destroyer {
+    background-color: turquoise;
+}
+
+.submarine-container {
+    width: 120px; 
+    height: 40px; 
+    display: flex;
+    margin: 10px;
+    background-color: pink;
+}
+
+.submarine {
+    background-color: pink;
+}
+
+.cruiser-container {
+    width: 120px; 
+    height: 40px; 
+    display: flex;
+    margin: 10px;
+    background-color: lightslategray;
+}
+
+.cruiser {
+    background-color: lightslategray;
+}
+
+.battleship-container {
+    width: 160px; 
+    height: 40px; 
+    display: flex;
+    margin: 10px;
+    background-color: orangered;
+}
+
+.battleship {
+    background-color: orangered;
+}
+
+.carrier-container {
+    width: 200px; 
+    height: 40px; 
+    display: flex;
+    margin: 10px;
+    background-color: greenyellow;
+}
+
+.carrier {
+    background-color: greenyellow;
+}
+
+.ship div {
+    width: 40px; 
+    height: 40px; 
+}
