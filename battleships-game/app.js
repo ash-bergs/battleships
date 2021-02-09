@@ -6,6 +6,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const computerGrid = document.querySelector('.grid-computer');
     const computerSquares = []; 
     const displayGrid = document.querySelector('.grid-display');
+    // hardcoding all the user ships to start off in horizontal position 👇
+    let isHorizontal = true; 
     // Selecting all the ships we'll need later in the JS 
     const ships = document.querySelectorAll('.ship');
     const destroyer = document.querySelector('.destroyer-container');
@@ -116,5 +118,30 @@ document.addEventListener("DOMContentLoaded", () => {
     generate(shipArray[2]);
     generate(shipArray[3]);
     generate(shipArray[4]); 
+
+    // User functionality 
+    // Rotate ships
+    //! There's a lot of repition here - I can refactor this to be more DRY later.
+    //? When I add a return after updating the isHorizontal variable it causes some odd behavior in my ships div. That goes away once it's removed. Don't I need to return though?
+    function rotate() {
+        if (isHorizontal) {
+            destroyer.classList.toggle('destroyer-container-vertical');
+            submarine.classList.toggle('submarine-container-vertical');
+            cruiser.classList.toggle('cruiser-container-vertical');
+            battleship.classList.toggle('battleship-container-vertical');
+            carrier.classList.toggle('carrier-container-vertical'); 
+            isHorizontal = false;
+        }
+        if (!isHorizontal) {
+            destroyer.classList.toggle('destroyer-container');
+            submarine.classList.toggle('submarine-container');
+            cruiser.classList.toggle('cruiser-container');
+            battleship.classList.toggle('battleship-container');
+            carrier.classList.toggle('carrier-container'); 
+            isHorizontal = true;
+        }
+    }
+    // attaches the 👆 rotate function to the rotate button 👇
+    rotateButton.addEventListener('click', rotate); 
 
 }); 
