@@ -145,98 +145,105 @@ document.addEventListener("DOMContentLoaded", () => {
     rotateButton.addEventListener('click', rotate); 
 
     //! 🦄 Drag events 
-/* -------------------------------------------------------------------------- */
-/*                       About the HTML Drag & Drop API                       */
-/* 
-    We're using DRAGGABLE elements in this project. 
-    These elements are provided to us by the HTML Drag and Drop API 
+    /* -------------------------------------------------------------------------- */
+    /*                       About the HTML Drag & Drop API                       */
+    /* 
+        We're using DRAGGABLE elements in this project. 
+        These elements are provided to us by the HTML Drag and Drop API 
 
-    The API uses the DOM event model - and the drag events available to us are inherited from mouse events 
-    * Each even has an associated GLOBAL EVENT HANDLER - below we are using those globally available handlers 
-    Assigning them to the interact-able squares 
-    ? Learn more here: https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API
-*/
-/* -------------------------------------------------------------------------- */
+        The API uses the DOM event model - and the drag events available to us are inherited from mouse events 
+        * Each even has an associated GLOBAL EVENT HANDLER - below we are using those globally available handlers 
+        Assigning them to the interact-able squares 
+        ? Learn more here: https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API
+    */
+    /* -------------------------------------------------------------------------- */
 
-// Adding Event Listeners 
-ships.forEach(ship => ship.addEventListener('dragstart', dragStart)); 
-userSquares.forEach(square => square.addEventListener('dragstart', dragStart));
-userSquares.forEach(square => square.addEventListener('dragover', dragOver));
-userSquares.forEach(square => square.addEventListener('dragenter', dragEnter)); 
-userSquares.forEach(square => square.addEventListener('dragleave', dragLeave));
-userSquares.forEach(square => square.addEventListener('drop', dragDrop));
-userSquares.forEach(square => square.addEventListener('dragend', dragEnd));
+    // Adding Event Listeners 
+    ships.forEach(ship => ship.addEventListener('dragstart', dragStart)); 
+    userSquares.forEach(square => square.addEventListener('dragstart', dragStart));
+    userSquares.forEach(square => square.addEventListener('dragover', dragOver));
+    userSquares.forEach(square => square.addEventListener('dragenter', dragEnter)); 
+    userSquares.forEach(square => square.addEventListener('dragleave', dragLeave));
+    userSquares.forEach(square => square.addEventListener('drop', dragDrop));
+    userSquares.forEach(square => square.addEventListener('dragend', dragEnd));
 
-// First we want to grab the id of the ship INDEX that's currently picked up by the user 
-let selectedShipNameWithIndex 
-let draggedShip
-let draggedShipLength
+    // First we want to grab the id of the ship INDEX that's currently picked up by the user 
+    let selectedShipNameWithIndex 
+    let draggedShip
+    let draggedShipLength
 
-ships.forEach(ship => ship.addEventListener('mousedown', (e) => {
-    // this grabs the id of the square we actually select... so for longer ships that could be 0, 1, 2, 3 etc
-    selectedShipNameWithIndex = e.target.id; 
-    // testing 
-    // console.log(selectedShipNameWithIndex); 
-})); 
+    ships.forEach(ship => ship.addEventListener('mousedown', (e) => {
+        // this grabs the id of the square we actually select... so for longer ships that could be 0, 1, 2, 3 etc
+        selectedShipNameWithIndex = e.target.id; 
+        // testing 
+        // console.log(selectedShipNameWithIndex); 
+    })); 
 
-// * Now that we have that index, we use the build functionality with event handlers below
+    // * Now that we have that index, we use the build functionality with event handlers below
 
-function dragStart() {
-    draggedShip = this;
-    draggedShipLength = this.childNodes.length
-    // testing
-    // console.log('dragged ship:', draggedShip); 
-}
-
-function dragOver(e) {
-    e.preventDefault(); 
-}
-
-function dragEnter(e) {
-    e.preventDefault(); 
-}
-
-function dragLeave() {
-    console.log('drag leave'); 
-}
-
-//* Here is where the most stuff is going to happen! 
-function dragDrop() {
-    let shipNameWithLastId = draggedShip.lastChild.id; 
-    // we are slicing the id we just grabbed 👆 
-    // so that we can just get "submarine" "carrier" and so on! 
-    let shipClass = shipNameWithLastId.slice(0, -2); 
-    // Un-comment to see the result 👇
-    // console.log('last id slice:', shipClass, shipNameWithLastId); 
-    
-    // * To make sure that we can place the ship where we are in the grid
-    // we have to find what square of the USERGRID the LAST ELEMENT of our DRAGGEDSHIP is going to be in
-    // we need to parse the substring we pull from shipNameWithLastId into an integer - so it can be used to place ships in the numbered userGrid
-    let lastShipIndex = parseInt(shipNameWithLastId.substr(-1)); 
-    let shipLastId = lastShipIndex + parseInt(this.dataset.id); 
-
-    selectedShipIndex = parseInt(selectedShipNameWithIndex.substr(-1)); 
-    // testing - console.log(shipLastId, selectedShipIndex); 
-    shipLastId = shipLastId - selectedShipIndex
-
-    if (isHorizontal) {
-        for (let i=0; i<draggedShipLength; i++) {
-            // handling adding the 'taken' and proper class names to the userGrid when we drop a new ship onto them
-            userSquares[parseInt(this.dataset.id) - selectedShipIndex + i].classList.add('taken', shipClass); 
-        }
-    } else if (!isHorizontal) {
-        for (let i=0; i<draggedShipLength; i++) {
-            // we're not incrementing by one this time... these ships stack
-            // so we increment by TEN - the number we already set in the WIDTH variable - a handy way to remember its purpose 
-            userSquares[parseInt(this.dataset.id) - selectedShipIndex + width * i].classList.add('taken', shipClass); 
-        }
-    } else return; 
-    
-    // Now that a ship has been moved, we want to remove it from the display grid 👇
-    displayGrid.removeChild(draggedShip); 
+    function dragStart() {
+        draggedShip = this;
+        draggedShipLength = this.childNodes.length
+        // testing
+        // console.log('dragged ship:', draggedShip); 
     }
-    //TODO - I need to account for ships running over space and clipping onto the next row. 
-    //! But first... to debug my isHorizontal problem
+
+    function dragOver(e) {
+        e.preventDefault(); 
+    }
+
+    function dragEnter(e) {
+        e.preventDefault(); 
+    }
+
+    function dragLeave() {
+        console.log('drag leave'); 
+    }
+
+    //* Here is where the most stuff is going to happen! 
+    function dragDrop() {
+        let shipNameWithLastId = draggedShip.lastChild.id; 
+        // we are slicing the id we just grabbed 👆 
+        // so that we can just get "submarine" "carrier" and so on! 
+        let shipClass = shipNameWithLastId.slice(0, -2); 
+        // Un-comment to see the result 👇
+        // console.log('last id slice:', shipClass, shipNameWithLastId); 
+        
+        // * To make sure that we can place the ship where we are in the grid
+        // we have to find what square of the USERGRID the LAST ELEMENT of our DRAGGEDSHIP is going to be in
+        // we need to parse the substring we pull from shipNameWithLastId into an integer - so it can be used to place ships in the numbered userGrid
+        let lastShipIndex = parseInt(shipNameWithLastId.substr(-1)); 
+        let shipLastId = lastShipIndex + parseInt(this.dataset.id); 
+        // an array of indexes that a user is not allowed to have their last ship index in 
+        const notAllowedHorizontal = [0,10,20,30,40,50,60,70,80,90,1,11,21,31,41,51,61,71,81,91,2,22,32,42,52,62,72,82,92,3,13,23,33,43,53,63,73,83,93];
+        const notAllowedVertical = [99,98,97,96,95,94,93,92,91,90,89,88,87,86,85,84,83,82,81,80,79,78,77,76,75,74,73,72,71,70,69,68,67,66,65,64,63,62,61,60];
+
+        // using the currently dragged ship's LASTSHIPINDEX (the id of the LAST child), and if it increments by 10, then it is clipping onto the next row - i.e. wrapping 
+        let newNotAllowedHorizontal = notAllowedHorizontal.splice(0, 10 * lastShipIndex);
+        let newNotAllowedVertical = notAllowedVertical.splice(0, 10 * lastShipIndex); 
+
+        selectedShipIndex = parseInt(selectedShipNameWithIndex.substr(-1)); 
+        // testing - console.log(shipLastId, selectedShipIndex); 
+        shipLastId = shipLastId - selectedShipIndex
+
+        // IF the ship is horizontal, and the LASTSHIPID of the selected ship doesn't include (i.e. fall into) the NOT ALLOWED squares, then....
+        if (isHorizontal && !newNotAllowedHorizontal.includes(shipLastId)) {
+            for (let i=0; i<draggedShipLength; i++) {
+                // handling adding the 'taken' and proper class names to the userGrid when we drop a new ship onto them
+                userSquares[parseInt(this.dataset.id) - selectedShipIndex + i].classList.add('taken', shipClass); 
+            }
+        } else if (!isHorizontal && !newNotAllowedVertical.includes(shipLastId)) {
+            for (let i=0; i<draggedShipLength; i++) {
+                // we're not incrementing by one this time... these ships stack
+                // so we increment by TEN - the number we already set in the WIDTH variable - a handy way to remember its purpose 
+                userSquares[parseInt(this.dataset.id) - selectedShipIndex + width*i].classList.add('taken', shipClass); 
+            }
+        } else return; 
+        
+        // Now that a ship has been moved, we want to remove it from the display grid 👇
+        displayGrid.removeChild(draggedShip); 
+    }
+
 
     function dragEnd() {
 
