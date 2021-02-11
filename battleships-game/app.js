@@ -253,3 +253,5 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 }); 
+
+// TODO: Now I need to build the logic for the game - what are some things we're going to need? 
