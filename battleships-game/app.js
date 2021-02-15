@@ -21,6 +21,9 @@ document.addEventListener("DOMContentLoaded", () => {
     // Div to see whose turn it is & info
     const turnDisplay = document.querySelector('#whose-go');
     const infoDisplay = document.querySelector('#info');
+    // Variables to assist in the GAME LOGIC functionality at the bottom 
+    let isGameOver = true; 
+    let currentPlayer = 'user'; 
 
     // Creates Boards 
     const width = 10; 
@@ -248,10 +251,51 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     function dragEnd() {
-
+        console.log("drag end"); 
     }
 
+    //! Game Logic 
+    
+    function playGame() {
+        if (isGameOver) return
+        if (currentPlayer === 'user') {
+            // we're grabbing the element with class name WHOSE-GO (which is an empty div), that is isolated with a query selector and stored in turnDisplay above 
+            turnDisplay.innerHTML = "Your Go!"; 
+            computerSquares.forEach((square) => {
+                square.addEventListener('click', function(e) {
+                    revealSquare(square); 
+                })
+            })
+        } if (currentPlayer === 'computer') {
+            turnDisplay.innerHTML = "Computer's Turn"
+        }
+    }
 
+    // Attach the playGame function to the start button! 
+    startButton.addEventListener('click', playGame); 
+
+    // Variables to hold the count of "hits" on different classes 
+    let destroyerCount = 0; 
+    let submarineCount = 0; 
+    let cruiserCount = 0; 
+    let battleshipCount = 0; 
+    let carrierCount = 0; 
+    
+    function revealSquare(square) {
+        // if the square has a given ship name among its class names, increment the hit count
+        if (square.classList.contains('destroyer')) destroyerCount++; 
+        if (square.classList.contains('submarine')) destroyerCount++;
+        if (square.classList.contains('cruiser')) destroyerCount++;
+        if (square.classList.contains('battleship')) destroyerCount++;
+        if (square.classList.contains('carrier')) destroyerCount++;
+
+        if (square.classList.contains('taken')) {
+            // any ship, from any category, will also add "taken" to the list of class names for a square 
+            // if the square is taken, then the user successfully hit a ship
+            // add class name BOOM and color the square red 
+            square.classList.add('boom'); 
+        }
+    }
 }); 
 
 // TODO: Now I need to build the logic for the game - what are some things we're going to need? 
