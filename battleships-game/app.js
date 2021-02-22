@@ -268,6 +268,9 @@ document.addEventListener("DOMContentLoaded", () => {
             })
         } if (currentPlayer === 'computer') {
             turnDisplay.innerHTML = "Computer's Turn"
+            // we used a setTimeout function, passing in the computerGo function to be invoked with a delay 1000 milliseconds 
+            // this is just done to give a smooth, realistic feel to the turn change 
+            setTimeout(computerGo, 1000); 
         }
     }
 
@@ -284,7 +287,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function revealSquare(square) {
         // ! We have a problem - if a square that has already been selected is clicked, it counts as another turn. Let's disable that.
         // we'll do that at the top of the function 
-        if (square.classList.contains('boom')) {
+        if (!square.classList.contains('boom')) {
             // if the square has a given ship name among its class names, increment the hit count
             if (square.classList.contains('destroyer')) destroyerCount++; 
             if (square.classList.contains('submarine')) submarineCount++;
@@ -308,6 +311,28 @@ document.addEventListener("DOMContentLoaded", () => {
         currentPlayer = 'computer'; 
         playGame();
     }
-}); 
 
-// TODO: Now I need to build the logic for the game - what are some things we're going to need? 
+     // we need to basically recreate the logic we used for the User's turn 
+    // ? how can I make this more DRY? 
+    let npcDestroyerCount = 0; 
+    let npcSubmarineCount = 0; 
+    let npcCruiserCount = 0; 
+    let npcBattleshipCount = 0; 
+    let npcCarrierCount = 0; 
+
+    function computerGo() {
+        let random = Math.floor(Math.random() * userSquares.length); 
+        // if the userSquare at the random number DOESNT contain "boom", then....
+        //TODO There's a problem with this logic... the computer *always* gets a hit. Refactor this to fix that. Not sure how to right now. 
+        if (!userSquares[random].classList.contains('boom')) {  
+            userSquares[random].classList.add('boom')
+            if (userSquares[random].classList.contains('destroyer')) npcDestroyerCount++; 
+            if (userSquares[random].classList.contains('submarine')) npcSubmarineCount++;
+            if (userSquares[random].classList.contains('cruiser')) npcCruiserCount++;
+            if (userSquares[random].classList.contains('battleship')) npcBattleshipCount++;
+            if (userSquares[random].classList.contains('carrier')) npcCarrierCount++;
+        } else computerGo(); 
+        currentPlayer = 'user'; 
+        turnDisplay.innerHTML = "Your Go"; 
+    }
+}); 
