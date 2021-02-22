@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const turnDisplay = document.querySelector('#whose-go');
     const infoDisplay = document.querySelector('#info');
     // Variables to assist in the GAME LOGIC functionality at the bottom 
-    let isGameOver = true; 
+    let isGameOver = false; 
     let currentPlayer = 'user'; 
 
     // Creates Boards 
@@ -282,19 +282,31 @@ document.addEventListener("DOMContentLoaded", () => {
     let carrierCount = 0; 
     
     function revealSquare(square) {
-        // if the square has a given ship name among its class names, increment the hit count
-        if (square.classList.contains('destroyer')) destroyerCount++; 
-        if (square.classList.contains('submarine')) destroyerCount++;
-        if (square.classList.contains('cruiser')) destroyerCount++;
-        if (square.classList.contains('battleship')) destroyerCount++;
-        if (square.classList.contains('carrier')) destroyerCount++;
+        // ! We have a problem - if a square that has already been selected is clicked, it counts as another turn. Let's disable that.
+        // we'll do that at the top of the function 
+        if (square.classList.contains('boom')) {
+            // if the square has a given ship name among its class names, increment the hit count
+            if (square.classList.contains('destroyer')) destroyerCount++; 
+            if (square.classList.contains('submarine')) submarineCount++;
+            if (square.classList.contains('cruiser')) cruiserCount++;
+            if (square.classList.contains('battleship')) battleshipCount++;
+            if (square.classList.contains('carrier')) carrierCount++;
+        }
 
         if (square.classList.contains('taken')) {
             // any ship, from any category, will also add "taken" to the list of class names for a square 
             // if the square is taken, then the user successfully hit a ship
-            // add class name BOOM and color the square red 
+            // add classname BOOM 
             square.classList.add('boom'); 
+            //* now we want to add a way to visualize a "miss" (otherwise how will we remember?)
+        } else {
+            square.classList.add('miss'); 
         }
+        // now we need to pass the turn to the computer 
+        // then call the playGame function again... 
+        //TODO write the logic for the computer's go! 
+        currentPlayer = 'computer'; 
+        playGame();
     }
 }); 
 
