@@ -308,6 +308,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // now we need to pass the turn to the computer 
         // then call the playGame function again... 
         //TODO write the logic for the computer's go! 
+        checkForWins(); 
         currentPlayer = 'computer'; 
         playGame();
     }
@@ -334,5 +335,83 @@ document.addEventListener("DOMContentLoaded", () => {
         } else computerGo(); 
         currentPlayer = 'user'; 
         turnDisplay.innerHTML = "Your Go"; 
+    }
+
+    //* Check for wins! 
+    // We know how many squares make up each battleship - so we'll check for that amount in each of the counts we set up. 
+    // If the count is a certain number, then that ship must have been sunk. 
+    // 10 points are given per sunk ship
+    // Total points needed to win: 50 
+    function checkForWins() {
+        //* user logic 
+        if (destroyerCount === 2) {
+            // infoDisplay is simply an element in the "hidden-info" div. This will let user's know information about the game as it progresses 
+            infoDisplay.innerHTML = "You sank the computer's destroyer!"
+            destroyerCount = 10; 
+        }
+        if (submarineCount === 3) {
+            // infoDisplay is simply an element in the "hidden-info" div. This will let user's know information about the game as it progresses 
+            infoDisplay.innerHTML = "You sank the computer's submarine!"
+            submarineCount = 10; 
+        }
+        if (cruiserCount === 3) {
+            // infoDisplay is simply an element in the "hidden-info" div. This will let user's know information about the game as it progresses 
+            infoDisplay.innerHTML = "You sank the computer's cruiser!"
+            cruiserCount = 10; 
+        }
+        if (battleshipCount === 4) {
+            // infoDisplay is simply an element in the "hidden-info" div. This will let user's know information about the game as it progresses 
+            infoDisplay.innerHTML = "You sank the computer's battleship!"
+            battleshipCount = 10; 
+        }
+        if (carrierCount === 2) {
+            // infoDisplay is simply an element in the "hidden-info" div. This will let user's know information about the game as it progresses 
+            infoDisplay.innerHTML = "You sank the computer's carrier!"
+            carrierCount = 10; 
+        }
+
+        //* computer logic 
+        if (npcDestroyerCount === 2) {
+            // infoDisplay is simply an element in the "hidden-info" div. This will let user's know information about the game as it progresses 
+            infoDisplay.innerHTML = "The computer sunk your destroyer!"
+            npcDestroyerCount = 10; 
+        }
+        if (npcSubmarineCount === 3) {
+            // infoDisplay is simply an element in the "hidden-info" div. This will let user's know information about the game as it progresses 
+            infoDisplay.innerHTML = "The computer sunk your submarine!"
+            submarineCount = 10; 
+        }
+        if (npcCruiserCount === 3) {
+            // infoDisplay is simply an element in the "hidden-info" div. This will let user's know information about the game as it progresses 
+            infoDisplay.innerHTML = "The computer sunk your cruiser!"
+            npcCruiserCount = 10; 
+        }
+        if (npcBattleshipCount === 4) {
+            // infoDisplay is simply an element in the "hidden-info" div. This will let user's know information about the game as it progresses 
+            infoDisplay.innerHTML = "The computer sunk your battleship!"
+            npcBattleshipCount = 10; 
+        }
+        if (npcCarrierCount === 2) {
+            // infoDisplay is simply an element in the "hidden-info" div. This will let user's know information about the game as it progresses 
+            infoDisplay.innerHTML = "The computer sunk your carrier!"
+            npcCarrierCount = 10; 
+        }
+
+        // Add the numbers for a total of 50 to announce a winner! 
+        if ((destroyerCount + submarineCount + cruiserCount + battleshipCount + carrierCount) === 50) {
+            infoDisplay.innerHTML = "You Win!"; 
+            // call the gameOver function, which set isGameOver to true and resets the game boards 
+            gameOver(); 
+        }
+        if ((npcDestroyerCount + npcSubmarineCount + npcCruiserCount + npcBattleshipCount + npcCarrierCount) === 50) {
+            infoDisplay.innerHTML = "Computer Wins!"; 
+            // call the gameOver function, which set isGameOver to true and resets the game boards 
+            gameOver(); 
+        }
+    }
+
+    function gameOver() {
+        isGameOver = true; 
+        startButton.removeEventListener('click', playGame); 
     }
 }); 
