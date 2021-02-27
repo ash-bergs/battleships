@@ -17,11 +17,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const carrier = document.querySelector('.carrier-container');
     // Selecting the buttons we'll need 
     const startButton = document.querySelector('#start');
-    const rotateShip = document.querySelector('#rotate');
+    const rotateButton = document.querySelector('#rotate');
     // Div to see whose turn it is & info
     const turnDisplay = document.querySelector('#whose-go');
     const infoDisplay = document.querySelector('#info');
-    // Variables to assist in the GAME LOGIC functionality at the bottom 
+    // Variables to help the game logic at the bottom 
     let isGameOver = false; 
     let currentPlayer = 'user'; 
 
@@ -111,6 +111,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 computerSquares[randomStart + index].classList.add('taken', ship.name)
             })
         } else {
+            // otherwise one of the squares must be taken, or the ship is at the edge...
+            // so RUN IT AGAIN!
+            // Does this count as recursion? 
             generate(ship)
         }
     }; 
@@ -122,10 +125,9 @@ document.addEventListener("DOMContentLoaded", () => {
     generate(shipArray[3]);
     generate(shipArray[4]); 
 
-    // User functionality 
-    // Rotate ships
+    // USER FUNCTIONALITY 
+    // rotate user ships
     //! There's a lot of repition here - I can refactor this to be more DRY later.
-    //? When I add a return after updating the isHorizontal variable it causes some odd behavior in my ships div. That goes away once it's removed. Don't I need to return though?
     function rotate() {
         if (isHorizontal) {
             destroyer.classList.toggle('destroyer-container-vertical');
@@ -137,33 +139,37 @@ document.addEventListener("DOMContentLoaded", () => {
             return
         }
         if (!isHorizontal) {
+            //! 👇 Previously, I was having some buggy behavior... I didn't have "-vertical" at the end of the toggle parameter
+            //? I think I'm conceptualizing the .toggle method incorrectly, and I have to use the same class name as above?
+            // This was completely the problem! //TODO Research more about the JS toggle method! 
             destroyer.classList.toggle('destroyer-container-vertical');
             submarine.classList.toggle('submarine-container-vertical');
             cruiser.classList.toggle('cruiser-container-vertical');
             battleship.classList.toggle('battleship-container-vertical');
             carrier.classList.toggle('carrier-container-vertical'); 
             isHorizontal = true;
+            // console.log(isHorizontal); 
             return
         }
     }
-    // attaches the 👆 rotate function to the rotate button 👇
+    // attaches the 👆 function to the rotate button 👇
     rotateButton.addEventListener('click', rotate); 
 
+    
     //! 🦄 Drag events 
-    /* -------------------------------------------------------------------------- */
-    /*                       About the HTML Drag & Drop API                       */
-    /* 
-        We're using DRAGGABLE elements in this project. 
-        These elements are provided to us by the HTML Drag and Drop API 
+/* -------------------------------------------------------------------------- */
+/*                       About the HTML Drag & Drop API                       */
+/* 
+    We're using DRAGGABLE elements in this project. 
+    These elements are provided to us by the HTML Drag and Drop API 
 
-        The API uses the DOM event model - and the drag events available to us are inherited from mouse events 
-        * Each even has an associated GLOBAL EVENT HANDLER - below we are using those globally available handlers 
-        Assigning them to the interact-able squares 
-        ? Learn more here: https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API
-    */
-    /* -------------------------------------------------------------------------- */
+    The API uses the DOM event model - and the drag events available to us are inherited from mouse events 
+    * Each even has an associated GLOBAL EVENT HANDLER - below we are using those globally available handlers 
+    Assigning them to the interact-able squares 
+    ? Learn more here: https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API
+*/
+/* -------------------------------------------------------------------------- */
 
-    // Adding Event Listeners 
     ships.forEach(ship => ship.addEventListener('dragstart', dragStart)); 
     userSquares.forEach(square => square.addEventListener('dragstart', dragStart));
     userSquares.forEach(square => square.addEventListener('dragover', dragOver));
@@ -196,15 +202,15 @@ document.addEventListener("DOMContentLoaded", () => {
     function dragOver(e) {
         e.preventDefault(); 
     }
-
+    
     function dragEnter(e) {
         e.preventDefault(); 
     }
-
+    
     function dragLeave() {
         console.log('drag leave'); 
     }
-
+    
     //* Here is where the most stuff is going to happen! 
     function dragDrop() {
         let shipNameWithLastId = draggedShip.lastChild.id; 
@@ -249,25 +255,22 @@ document.addEventListener("DOMContentLoaded", () => {
         displayGrid.removeChild(draggedShip); 
     }
 
-
     function dragEnd() {
-        console.log("drag end"); 
+    
     }
 
     //! Game Logic 
-    
+
     function playGame() {
         if (isGameOver) return
         if (currentPlayer === 'user') {
             // we're grabbing the element with class name WHOSE-GO (which is an empty div), that is isolated with a query selector and stored in turnDisplay above 
             turnDisplay.innerHTML = "Your Go!"; 
-            computerSquares.forEach((square) => {
-                square.addEventListener('click', function(e) {
-                    revealSquare(square); 
-                })
-            })
+            computerSquares.forEach(square => square.addEventListener('click', function(e) {
+                revealSquare(square); 
+            }))
         } if (currentPlayer === 'computer') {
-            turnDisplay.innerHTML = "Computer's Turn"
+            turnDisplay.innerHTML = "Computer's Turn"; 
             // we used a setTimeout function, passing in the computerGo function to be invoked with a delay 1000 milliseconds 
             // this is just done to give a smooth, realistic feel to the turn change 
             setTimeout(computerGo, 1000); 
@@ -283,13 +286,13 @@ document.addEventListener("DOMContentLoaded", () => {
     let cruiserCount = 0; 
     let battleshipCount = 0; 
     let carrierCount = 0; 
-    
+
     function revealSquare(square) {
         // ! We have a problem - if a square that has already been selected is clicked, it counts as another turn. Let's disable that.
-        // we'll do that at the top of the function 
         if (!square.classList.contains('boom')) {
             // if the square has a given ship name among its class names, increment the hit count
             if (square.classList.contains('destroyer')) destroyerCount++; 
+            console.log(destroyerCount)
             if (square.classList.contains('submarine')) submarineCount++;
             if (square.classList.contains('cruiser')) cruiserCount++;
             if (square.classList.contains('battleship')) battleshipCount++;
@@ -313,7 +316,7 @@ document.addEventListener("DOMContentLoaded", () => {
         playGame();
     }
 
-     // we need to basically recreate the logic we used for the User's turn 
+    // we need to basically recreate the logic we used for the User's turn 
     // ? how can I make this more DRY? 
     let npcDestroyerCount = 0; 
     let npcSubmarineCount = 0; 
@@ -324,7 +327,6 @@ document.addEventListener("DOMContentLoaded", () => {
     function computerGo() {
         let random = Math.floor(Math.random() * userSquares.length); 
         // if the userSquare at the random number DOESNT contain "boom", then....
-        //TODO There's a problem with this logic... the computer *always* gets a hit. Refactor this to fix that. Not sure how to right now. 
         if (!userSquares[random].classList.contains('boom')) {  
             userSquares[random].classList.add('boom')
             if (userSquares[random].classList.contains('destroyer')) npcDestroyerCount++; 
@@ -404,7 +406,7 @@ document.addEventListener("DOMContentLoaded", () => {
             gameOver(); 
         }
         if ((npcDestroyerCount + npcSubmarineCount + npcCruiserCount + npcBattleshipCount + npcCarrierCount) === 50) {
-            infoDisplay.innerHTML = "Computer Wins!"; 
+            infoDisplay.innerHTML = "You Win!"; 
             // call the gameOver function, which set isGameOver to true and resets the game boards 
             gameOver(); 
         }
@@ -414,4 +416,5 @@ document.addEventListener("DOMContentLoaded", () => {
         isGameOver = true; 
         startButton.removeEventListener('click', playGame); 
     }
+
 }); 
