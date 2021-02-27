@@ -20,6 +20,8 @@
     margin: 20px;
 }
 
+
+
 .grid-display {
     width: 400px; 
     height: 400px; 
@@ -43,6 +45,15 @@
     background-color: turquoise;
 }
 
+.destroyer-container-vertical {
+    width: 40px; 
+    height: 80px; 
+    display: flex;
+    flex-wrap: wrap;
+    margin: 10px;
+    background-color: turquoise;
+}
+
 .destroyer {
     background-color: turquoise;
 }
@@ -55,6 +66,16 @@
     background-color: pink;
 }
 
+.submarine-container-vertical {
+    width: 40px; 
+    height: 120px; 
+    display: flex;
+    flex-wrap: wrap;
+    margin: 10px;
+    background-color: pink;
+}
+
+
 .submarine {
     background-color: pink;
 }
@@ -63,6 +84,15 @@
     width: 120px; 
     height: 40px; 
     display: flex;
+    margin: 10px;
+    background-color: lightslategray;
+}
+
+.cruiser-container-vertical {
+    width: 40px; 
+    height: 120px; 
+    display: flex;
+    flex-wrap: wrap;
     margin: 10px;
     background-color: lightslategray;
 }
@@ -79,6 +109,15 @@
     background-color: orangered;
 }
 
+.battleship-container-vertical {
+    width: 40px; 
+    height: 160px; 
+    display: flex;
+    flex-wrap: wrap;
+    margin: 10px;
+    background-color: orangered;
+}
+
 .battleship {
     background-color: orangered;
 }
@@ -87,6 +126,15 @@
     width: 200px; 
     height: 40px; 
     display: flex;
+    margin: 10px;
+    background-color: greenyellow;
+}
+
+.carrier-container-vertical {
+    width: 40px; 
+    height: 200px; 
+    display: flex;
+    flex-wrap: wrap;
     margin: 10px;
     background-color: greenyellow;
 }
@@ -100,6 +148,12 @@
     height: 40px; 
 }
 
+/* HOT or MISS styles - visualized during gameplay */
+
 .boom {
     background-color: red;
+}
+
+.miss {
+    background-color: greenyellow;
 }
