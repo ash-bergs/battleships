@@ -21,12 +21,67 @@ document.addEventListener("DOMContentLoaded", () => {
     // Div to see whose turn it is & info
     const turnDisplay = document.querySelector('#whose-go');
     const infoDisplay = document.querySelector('#info');
+    //* game mode buttons 
+    const singlePlayerButton = document.querySelector('#singlePlayerButton');
+    const multiPlayerButton = document.querySelector('#multiPlayerButton');
     // Variables to help the game logic at the bottom 
     let isGameOver = false; 
     let currentPlayer = 'user'; 
 
     // Creates Boards 
     const width = 10; 
+
+    //! start socket.io actions
+    // tracking several game properties/assigning default values
+    let gameMode = ""; 
+    let playerNum = 0; 
+    let ready = false; 
+    let enemyReady = false; 
+    // we want to check that all ships are placed before the game starts, to prevent cheating 🚫
+    let allShipsPlaced = false; 
+    let shotFired = -1; 
+
+    //* event listeners for single and multi player buttons 
+    // Single player mode 
+    singlePlayerButton.addEventListener("click", startSinglePlayer); 
+    //multiPlayerButton.addEventListener("click", startMultiPlayer); 
+
+    // io comes from the script that we load in index.html (below the stylesheet link)
+    const socket = io(); 
+
+    // get player # 
+    // we game the message socket is emitting the title of "player-number" in server.js 
+    // when that message is transmitted, we can 'find' it and read it by giving it's name 
+    socket.on("player-number", num => {
+        if (num === -1) {
+            infoDisplay.innerHTML = "Sorry the server is full"; 
+        } else {
+            // the data being sent to us from socket.io is a string, we need to parse that here into a number 
+            // assigning that to playerNum (defined above, line 34)
+            playerNum = parseInt(num);
+            // the message indicates we are player 1 (not player 0) then we are the secondary player 
+            if (playerNum === 1) currentPlayer = "enemy"
+            console.log(playerNum);
+        }
+    })
+
+    // Single player 
+    function startSinglePlayer() {
+        // to start we set the game mode appropriately 
+        gameMode = "singlePlayer"; 
+        //! now we need to change some things! Right now the computer ships are being generated and placed on the board in the JS below 
+        //! but we need to move that functionality to this helper function - since we only want computer ships to be generated in single player mode! 
+        // prev. line 168 
+        generate(shipArray[0]);
+        generate(shipArray[1]);
+        generate(shipArray[2]);
+        generate(shipArray[3]);
+        generate(shipArray[4]);
+
+        //! the startButton also needs
+        // prev. line 328
+        startButton.addEventListener('click', playGameSingle); 
+    }
 
     function createBoard(grid, squares, width) {
         for (let i=0; i<width * width; i++) {
@@ -116,14 +171,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // Does this count as recursion? 
             generate(ship)
         }
-    }; 
-
-    // could I just do a MAP to generate a ship for each ship in the shipsArray?
-    generate(shipArray[0]);
-    generate(shipArray[1]);
-    generate(shipArray[2]);
-    generate(shipArray[3]);
-    generate(shipArray[4]); 
+    };  
 
     // USER FUNCTIONALITY 
     // rotate user ships
@@ -261,7 +309,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     //! Game Logic 
 
-    function playGame() {
+    function playGameSingle() {
         if (isGameOver) return
         if (currentPlayer === 'user') {
             // we're grabbing the element with class name WHOSE-GO (which is an empty div), that is isolated with a query selector and stored in turnDisplay above 
@@ -276,9 +324,7 @@ document.addEventListener("DOMContentLoaded", () => {
             setTimeout(computerGo, 1000); 
         }
     }
-
-    // Attach the playGame function to the start button! 
-    startButton.addEventListener('click', playGame); 
+    
 
     // Variables to hold the count of "hits" on different classes 
     let destroyerCount = 0; 
@@ -313,7 +359,7 @@ document.addEventListener("DOMContentLoaded", () => {
         //TODO write the logic for the computer's go! 
         checkForWins(); 
         currentPlayer = 'computer'; 
-        playGame();
+        playGameSingle();
     }
 
     // we need to basically recreate the logic we used for the User's turn 
@@ -414,7 +460,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function gameOver() {
         isGameOver = true; 
-        startButton.removeEventListener('click', playGame); 
+        startButton.removeEventListener('click', playGameSingle); 
     }
 
 }); 
