@@ -157,3 +157,25 @@
 .miss {
     background-color: greenyellow;
 }
+
+/* Multiplayer styles */
+
+.connected, .ready {
+    font-weight: normal;
+}
+
+.connected span, 
+.ready span {
+    display: inline-block;
+    width: 1rem; 
+    height: 1rem;
+    background-color: red;
+}
+
+/* ! In app.js we're toggling the class list of the <span> in "connected" - adding a classname green - here will update the css so that when that classname is added by the JS, the span will become green! */
+
+span.green {
+    background-color: green;
+}
+
+
