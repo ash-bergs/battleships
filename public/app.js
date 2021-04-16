@@ -44,26 +44,84 @@ document.addEventListener("DOMContentLoaded", () => {
     //* event listeners for single and multi player buttons 
     // Single player mode 
     singlePlayerButton.addEventListener("click", startSinglePlayer); 
-    //multiPlayerButton.addEventListener("click", startMultiPlayer); 
+    multiPlayerButton.addEventListener("click", startMultiPlayer); 
 
-    // io comes from the script that we load in index.html (below the stylesheet link)
-    const socket = io(); 
-
-    // get player # 
-    // we game the message socket is emitting the title of "player-number" in server.js 
-    // when that message is transmitted, we can 'find' it and read it by giving it's name 
-    socket.on("player-number", num => {
+    // Multiplayer 
+    function startMultiPlayer() {
+        gameMode = "multiPlayer"
+        // we only want to use socket when we're in multiplayer mode 
+        // io comes from the script that we load in index.html (below the stylesheet link)
+        const socket = io(); 
+ 
+        // get player # 
+        // when a message is transmitted, we can 'find' it and read it by giving it's name - "player-number" //! see server.js line 51
+        socket.on("player-number", num => {
         if (num === -1) {
             infoDisplay.innerHTML = "Sorry the server is full"; 
-        } else {
-            // the data being sent to us from socket.io is a string, we need to parse that here into a number 
-            // assigning that to playerNum (defined above, line 34)
-            playerNum = parseInt(num);
-            // the message indicates we are player 1 (not player 0) then we are the secondary player 
-            if (playerNum === 1) currentPlayer = "enemy"
-            console.log(playerNum);
+            } else {
+                // the data being sent to us from socket.io is a string, we need to parse that here into a number 
+                // assigning that to playerNum (defined above, line 34)
+                playerNum = parseInt(num);
+                // the message indicates we are player 1 (not player 0) then we are the secondary player 
+                if (playerNum === 1) currentPlayer = "enemy"
+                console.log(playerNum);
+
+                // ? What if we're ready before a second player even connects? How can we alert them that we're ready?
+                // get other player status 
+                socket.emit("check-players")
+            }
+        })
+
+        // alert that another player has connected or disconnected 
+        socket.on("player-connection", num => {
+            console.log(`Player number ${num} has connected or disconnected`); 
+            // playerConnectedOrDisconnected helper fn below 
+            playerConnectedOrDisconnected(num); 
+        })
+
+        // On enemy ready 
+        socket.on("enemy-ready", num => {
+            enemyReady = true; 
+            playerReady(num); 
+            if (ready) playGameMulti(socket)
+        })
+
+        // Check player status 
+        // function invoked when user first connects (checking if any other players are already connected and ready)
+        socket.on("check-players", players => {
+            players.forEach((player, index) => {
+                if (player.connected) playerConnectedOrDisconnected(index);
+                if (player.ready) {
+                    playerReady(index); 
+                    if (index !== playerNum) enemyReady = true; 
+                }
+            });
+        })
+
+        // Ready button click 
+        //TODO review what's going on here... how is socket working in this instance? 
+        startButton.addEventListener("click", () => {
+            if (allShipsPlaced) {
+                playGameMulti(socket); 
+            } else {
+                infoDisplay.innerHTML = "Please place all ships 🚢"; 
+            }
+
+        })
+
+        function playerConnectedOrDisconnected(num) {
+            //? What are we doing here? 
+            // player is assigned a value, that we obtain with the resolution of the expression passed into the string template literal -> meaning the final result will be a string 
+            // the expression ${parseInt(num) + 1} will grab the users playerNum, assigned to them from the connections array. 
+            // This is ZERO indexed, and the two HTML elements we made (divs with class "player p1" or "player p2") are first indexed
+            // depending on what connection in the `connections` array that player is occupying, their 'ready' status will be displayed in the correct html element
+            let player = `.p${parseInt(num) + 1}`
+            // use the captured string to isolate the <span> element inside the element with classname "connected" and classname "p1" or "p2" in the body 
+            document.querySelector(`${player} .connected span`).classList.toggle('green'); 
+            // to let the the player know which player they are (1 or 2), make the font style bold
+            if (parseInt(num) === playerNum) document.querySelector(player).style.fontWeight = 'bold';  
         }
-    })
+    }
 
     // Single player 
     function startSinglePlayer() {
@@ -78,7 +136,7 @@ document.addEventListener("DOMContentLoaded", () => {
         generate(shipArray[3]);
         generate(shipArray[4]);
 
-        //! the startButton also needs
+        //! the startButton also needs needs to be moved to this single player mode 
         // prev. line 328
         startButton.addEventListener('click', playGameSingle); 
     }
@@ -301,6 +359,9 @@ document.addEventListener("DOMContentLoaded", () => {
         
         // Now that a ship has been moved, we want to remove it from the display grid 👇
         displayGrid.removeChild(draggedShip); 
+        // Once there are no ships in the displayGrid, then we can start the game (verifies no one is cheating by leaving ships on the board)
+        // allShipsPlaced is a boolean value, init at false 
+        if (!displayGrid.querySelector(".ship")) allShipsPlaced = true; 
     }
 
     function dragEnd() {
@@ -308,7 +369,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     //! Game Logic 
-
+    // Single player game logic
     function playGameSingle() {
         if (isGameOver) return
         if (currentPlayer === 'user') {
@@ -325,6 +386,39 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
     
+    // Multiplayer game logic 
+    // This is what happens when someone indicates they're ready to begin a multiplayer game 
+    // function is called several times, in different places, 
+    function playGameMulti(socket) {
+        // if game is over, return from the function 
+        if (isGameOver) return; 
+        if (!ready) {
+            // send a message to others that a player is ready 
+            socket.emit("player-ready"); 
+            // update local ready boolean to true 
+            ready = true; 
+            // playerReady will visually indicate readiness
+            playerReady(playerNum); 
+        }
+
+        if (enemyReady) {
+            if (currentPlayer === "user") {
+                turnDisplay.innerHTML = "Your Go"; 
+            } 
+            if (currentPlayer === "enemy") {
+                turnDisplay.innerHTML = "Enemy's Go"; 
+            }
+        }
+    }
+
+    function playerReady(num) {
+        let player = `.p${parseInt(num) + 1}`; 
+        //! start debug here
+        // console.log("check here", player);
+        // we did this at the top of the document on the .connected instead of .ready class 
+        // document.querySelector(`${player} .connected span`).classList.toggle('green'); 
+        document.querySelector(`${player} .ready span`).classList.toggle('green'); 
+    }
 
     // Variables to hold the count of "hits" on different classes 
     let destroyerCount = 0; 
