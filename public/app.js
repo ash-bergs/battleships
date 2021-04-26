@@ -68,7 +68,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 // ? What if we're ready before a second player even connects? How can we alert them that we're ready?
                 // get other player status 
-                socket.emit("check-players")
+                socket.emit("check-players"); 
             }
         })
 
@@ -98,6 +98,11 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         })
 
+        // On timeout 
+        socket.on("timeout", () => {
+            infoDisplay.innerHTML = "You have reached the 10 minute turn limit!"
+        })
+
         // Ready button click 
         //TODO review what's going on here... how is socket working in this instance? 
         startButton.addEventListener("click", () => {
@@ -106,8 +111,39 @@ document.addEventListener("DOMContentLoaded", () => {
             } else {
                 infoDisplay.innerHTML = "Please place all ships 🚢"; 
             }
-
         })
+
+        // Setup event listener for firing 
+        // ? we're using computerSquares? is that effectively now the "enemySquares"?
+        computerSquares.forEach(square => {
+            // adding an event listener on each square to check for a few things 
+            square.addEventListener('click', () => {
+                if (currentPlayer === 'user' && ready && enemyReady) {
+                    // if the current turn is ours, and both players are ready (all ships are placed) then...
+                    shotFired = square.dataset.id; 
+                    // we assigned a number to the dataset of each square in the CREATEBOARD function (how both player games boards are painted programmatically)
+                    // pass the server a notification and the shotFired data 
+                    socket.emit('fire', shotFired); 
+                }
+            }); 
+        })
+
+        // On fire RECEIVED 
+        socket.on('fire', id => {
+            enemyGo(id); 
+            // isolate the selected square (the one fired upon)
+            const square = userSquares[id]; 
+            // and emit its class list, that way we can see if it contains any of the 'cruiser-' 'submarine-' etc class names
+            socket.emit('fire-reply', square.classList); 
+            playGameMulti(socket); 
+        })
+
+        // on fire REPLY 
+        socket.on("fire-reply", classList => {
+            revealSquare(classList); 
+            playGameMulti(socket);
+        })
+
 
         function playerConnectedOrDisconnected(num) {
             //? What are we doing here? 
@@ -115,7 +151,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // the expression ${parseInt(num) + 1} will grab the users playerNum, assigned to them from the connections array. 
             // This is ZERO indexed, and the two HTML elements we made (divs with class "player p1" or "player p2") are first indexed
             // depending on what connection in the `connections` array that player is occupying, their 'ready' status will be displayed in the correct html element
-            let player = `.p${parseInt(num) + 1}`
+            let player = `.p${parseInt(num) + 1}`; 
             // use the captured string to isolate the <span> element inside the element with classname "connected" and classname "p1" or "p2" in the body 
             document.querySelector(`${player} .connected span`).classList.toggle('green'); 
             // to let the the player know which player they are (1 or 2), make the font style bold
@@ -127,17 +163,12 @@ document.addEventListener("DOMContentLoaded", () => {
     function startSinglePlayer() {
         // to start we set the game mode appropriately 
         gameMode = "singlePlayer"; 
-        //! now we need to change some things! Right now the computer ships are being generated and placed on the board in the JS below 
-        //! but we need to move that functionality to this helper function - since we only want computer ships to be generated in single player mode! 
-        // prev. line 168 
+        // generate computer ships
         generate(shipArray[0]);
         generate(shipArray[1]);
         generate(shipArray[2]);
         generate(shipArray[3]);
         generate(shipArray[4]);
-
-        //! the startButton also needs needs to be moved to this single player mode 
-        // prev. line 328
         startButton.addEventListener('click', playGameSingle); 
     }
 
@@ -376,13 +407,14 @@ document.addEventListener("DOMContentLoaded", () => {
             // we're grabbing the element with class name WHOSE-GO (which is an empty div), that is isolated with a query selector and stored in turnDisplay above 
             turnDisplay.innerHTML = "Your Go!"; 
             computerSquares.forEach(square => square.addEventListener('click', function(e) {
-                revealSquare(square); 
+                shotFired = square.dataset.id; 
+                revealSquare(square.classList); 
             }))
-        } if (currentPlayer === 'computer') {
-            turnDisplay.innerHTML = "Computer's Turn"; 
+        } if (currentPlayer === 'enemy') {
+            turnDisplay.innerHTML = "Enemy's Turn"; 
             // we used a setTimeout function, passing in the computerGo function to be invoked with a delay 1000 milliseconds 
             // this is just done to give a smooth, realistic feel to the turn change 
-            setTimeout(computerGo, 1000); 
+            setTimeout(enemyGo, 1000); 
         }
     }
     
@@ -427,33 +459,33 @@ document.addEventListener("DOMContentLoaded", () => {
     let battleshipCount = 0; 
     let carrierCount = 0; 
 
-    function revealSquare(square) {
-        // ! We have a problem - if a square that has already been selected is clicked, it counts as another turn. Let's disable that.
-        if (!square.classList.contains('boom')) {
+    function revealSquare(classList) {
+        const enemySquare = computerGrid.querySelector(`div[data-id='${shotFired}']`); 
+        const obj = Object.values(classList); 
+        if (!enemySquare.classList.contains('boom') && currentPlayer === 'user' && !isGameOver) {
             // if the square has a given ship name among its class names, increment the hit count
-            if (square.classList.contains('destroyer')) destroyerCount++; 
-            console.log(destroyerCount)
-            if (square.classList.contains('submarine')) submarineCount++;
-            if (square.classList.contains('cruiser')) cruiserCount++;
-            if (square.classList.contains('battleship')) battleshipCount++;
-            if (square.classList.contains('carrier')) carrierCount++;
+            if (obj.includes('destroyer')) destroyerCount++; 
+            if (obj.includes('submarine')) submarineCount++;
+            if (obj.includes('cruiser')) cruiserCount++;
+            if (obj.includes('battleship')) battleshipCount++;
+            if (obj.includes('carrier')) carrierCount++;
         }
 
-        if (square.classList.contains('taken')) {
+        if (obj.includes('taken')) {
             // any ship, from any category, will also add "taken" to the list of class names for a square 
             // if the square is taken, then the user successfully hit a ship
             // add classname BOOM 
-            square.classList.add('boom'); 
+            enemySquare.classList.add('boom'); 
             //* now we want to add a way to visualize a "miss" (otherwise how will we remember?)
         } else {
-            square.classList.add('miss'); 
+            enemySquare.classList.add('miss'); 
         }
         // now we need to pass the turn to the computer 
         // then call the playGame function again... 
         //TODO write the logic for the computer's go! 
         checkForWins(); 
-        currentPlayer = 'computer'; 
-        playGameSingle();
+        currentPlayer = 'enemy'; 
+        if (gameMode === "singlePlayer") playGameSingle();
     }
 
     // we need to basically recreate the logic we used for the User's turn 
@@ -464,18 +496,21 @@ document.addEventListener("DOMContentLoaded", () => {
     let npcBattleshipCount = 0; 
     let npcCarrierCount = 0; 
 
-    function computerGo() {
-        let random = Math.floor(Math.random() * userSquares.length); 
+    function enemyGo(square) {
+        //! If we're in singlePlayer mode, then the squares/ships for the enemy (i.e. the computer) need to be generated - the 'SQUARE' param will be UNDEFINED 
+        // so to solve for that, we'll define it, with the random number generator we built before 
+        if (gameMode === "singlePlayer") square = Math.floor(Math.random() * userSquares.length); 
         // if the userSquare at the random number DOESNT contain "boom", then....
-        if (!userSquares[random].classList.contains('boom')) {  
-            userSquares[random].classList.add('boom')
-            if (userSquares[random].classList.contains('destroyer')) npcDestroyerCount++; 
-            if (userSquares[random].classList.contains('submarine')) npcSubmarineCount++;
-            if (userSquares[random].classList.contains('cruiser')) npcCruiserCount++;
-            if (userSquares[random].classList.contains('battleship')) npcBattleshipCount++;
-            if (userSquares[random].classList.contains('carrier')) npcCarrierCount++;
-        } else computerGo(); 
-        currentPlayer = 'user'; 
+        if (!userSquares[square].classList.contains('boom')) {  
+            userSquares[square].classList.add('boom')
+            if (userSquares[square].classList.contains('destroyer')) npcDestroyerCount++; 
+            if (userSquares[square].classList.contains('submarine')) npcSubmarineCount++;
+            if (userSquares[square].classList.contains('cruiser')) npcCruiserCount++;
+            if (userSquares[square].classList.contains('battleship')) npcBattleshipCount++;
+            if (userSquares[square].classList.contains('carrier')) npcCarrierCount++;
+            checkForWins(); 
+        } else if (gameMode === "singlePlayer") enemyGo(); 
+        currentPlayer = "user"; 
         turnDisplay.innerHTML = "Your Go"; 
     }
 
@@ -485,68 +520,69 @@ document.addEventListener("DOMContentLoaded", () => {
     // 10 points are given per sunk ship
     // Total points needed to win: 50 
     function checkForWins() {
-        //* user logic 
+        let enemy = 'computer'; 
+        if (gameMode === "multiPlayer") enemy = "enemy"; 
         if (destroyerCount === 2) {
             // infoDisplay is simply an element in the "hidden-info" div. This will let user's know information about the game as it progresses 
-            infoDisplay.innerHTML = "You sank the computer's destroyer!"
+            infoDisplay.innerHTML = `You sank the ${enemy}'s destroyer!`
             destroyerCount = 10; 
         }
         if (submarineCount === 3) {
-            // infoDisplay is simply an element in the "hidden-info" div. This will let user's know information about the game as it progresses 
-            infoDisplay.innerHTML = "You sank the computer's submarine!"
+            // infoDisplay is simply an element in the `hidden-info` div. This will let user's know information about the game as it progresses 
+            infoDisplay.innerHTML = `You sank the ${enemy}'s submarine!`
             submarineCount = 10; 
         }
         if (cruiserCount === 3) {
-            // infoDisplay is simply an element in the "hidden-info" div. This will let user's know information about the game as it progresses 
-            infoDisplay.innerHTML = "You sank the computer's cruiser!"
+            // infoDisplay is simply an element in the `hidden-info` div. This will let user's know information about the game as it progresses 
+            infoDisplay.innerHTML = `You sank the ${enemy}'s cruiser!`
             cruiserCount = 10; 
         }
         if (battleshipCount === 4) {
-            // infoDisplay is simply an element in the "hidden-info" div. This will let user's know information about the game as it progresses 
-            infoDisplay.innerHTML = "You sank the computer's battleship!"
+            // infoDisplay is simply an element in the `hidden-info` div. This will let user's know information about the game as it progresses 
+            infoDisplay.innerHTML = `You sank the ${enemy}'s battleship!`
             battleshipCount = 10; 
         }
-        if (carrierCount === 2) {
-            // infoDisplay is simply an element in the "hidden-info" div. This will let user's know information about the game as it progresses 
-            infoDisplay.innerHTML = "You sank the computer's carrier!"
+        if (carrierCount === 5) {
+            // infoDisplay is simply an element in the `hidden-info` div. This will let user's know information about the game as it progresses 
+            infoDisplay.innerHTML = `You sank the ${enemy}'s carrier!`
             carrierCount = 10; 
         }
 
         //* computer logic 
         if (npcDestroyerCount === 2) {
             // infoDisplay is simply an element in the "hidden-info" div. This will let user's know information about the game as it progresses 
-            infoDisplay.innerHTML = "The computer sunk your destroyer!"
+            infoDisplay.innerHTML = `The ${enemy} sunk your destroyer!`
             npcDestroyerCount = 10; 
         }
         if (npcSubmarineCount === 3) {
-            // infoDisplay is simply an element in the "hidden-info" div. This will let user's know information about the game as it progresses 
-            infoDisplay.innerHTML = "The computer sunk your submarine!"
+            // infoDisplay is simply an element in the `hidden-info` div. This will let user's know information about the game as it progresses 
+            infoDisplay.innerHTML = `The ${enemy} sunk your submarine!`
             submarineCount = 10; 
         }
         if (npcCruiserCount === 3) {
-            // infoDisplay is simply an element in the "hidden-info" div. This will let user's know information about the game as it progresses 
-            infoDisplay.innerHTML = "The computer sunk your cruiser!"
+            // infoDisplay is simply an element in the `hidden-info` div. This will let user's know information about the game as it progresses 
+            infoDisplay.innerHTML = `The ${enemy} sunk your cruiser!`
             npcCruiserCount = 10; 
         }
         if (npcBattleshipCount === 4) {
-            // infoDisplay is simply an element in the "hidden-info" div. This will let user's know information about the game as it progresses 
-            infoDisplay.innerHTML = "The computer sunk your battleship!"
+            // infoDisplay is simply an element in the `hidden-info` div. This will let user's know information about the game as it progresses 
+            infoDisplay.innerHTML = `The ${enemy} sunk your battleship!`
             npcBattleshipCount = 10; 
         }
-        if (npcCarrierCount === 2) {
-            // infoDisplay is simply an element in the "hidden-info" div. This will let user's know information about the game as it progresses 
-            infoDisplay.innerHTML = "The computer sunk your carrier!"
+        if (npcCarrierCount === 5) {
+            // infoDisplay is simply an element in the `hidden-info` div. This will let user's know information about the game as it progresses 
+            infoDisplay.innerHTML = `The ${enemy} sunk your carrier!`
             npcCarrierCount = 10; 
         }
 
         // Add the numbers for a total of 50 to announce a winner! 
         if ((destroyerCount + submarineCount + cruiserCount + battleshipCount + carrierCount) === 50) {
-            infoDisplay.innerHTML = "You Win!"; 
+            infoDisplay.innerHTML = "YOU WIN!"; 
             // call the gameOver function, which set isGameOver to true and resets the game boards 
             gameOver(); 
         }
         if ((npcDestroyerCount + npcSubmarineCount + npcCruiserCount + npcBattleshipCount + npcCarrierCount) === 50) {
-            infoDisplay.innerHTML = "You Win!"; 
+            infoDisplay.innerHTML = `${enemy.toUpperCase()} WINS`; 
             // call the gameOver function, which set isGameOver to true and resets the game boards 
             gameOver(); 
         }
