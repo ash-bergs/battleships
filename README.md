@@ -69,12 +69,13 @@ Players are connected through Socket.io. Per the docs "Socket.IO is a library th
 
 There are a handful of bugs in the build right now that I need to solve for. 
 
-- Single Player mode doesn't end when it's supposed to. I suspect I'm calling `checkForWins` in the wrong place in the code, or I need to be calling it in an additional location. 
+- In Single Player mode you can see the computer's ships. This is helpful for testing things, but silly in practice. 
 - There's a bug with the submarine that I can't figure out. The first div of the submarinee doesn't register as a "hit", and the square is green when it should be red. 
 
 ![submarine bug 1](https://i.ibb.co/bRD48J7/JSbattleships-submarine-bug.jpg) ![submarine bug 2](https://i.ibb.co/KzcY0C1/JSbattleships-submarine-bug2.jpg)
 
 - 👆 Because the code is such a monolith (solving for this might help me find the answer to my problem 🤔) there's a lot to dig through to solve this one. 
+- Obviously, the project isn't very visually stunning right now... but that's up next! 
 
 ----
 
