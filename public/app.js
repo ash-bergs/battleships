@@ -68,7 +68,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 // ? What if we're ready before a second player even connects? How can we alert them that we're ready?
                 // get other player status 
-                socket.emit("check-players")
+                socket.emit("check-players"); 
             }
         })
 
@@ -106,8 +106,34 @@ document.addEventListener("DOMContentLoaded", () => {
             } else {
                 infoDisplay.innerHTML = "Please place all ships 🚢"; 
             }
-
         })
+
+        // Setup event listener for firing 
+        // ? we're using computerSquares? is that effectively now the "enemySquares"?
+        computerSquares.forEach(square => {
+            // adding an event listener on each square to check for a few things 
+            square.addEventListener('click', () => {
+                if (currentPlayer === 'user' && ready && enemyReady) {
+                    // if the current turn is ours, and both players are ready (all ships are placed) then...
+                    shotFired = square.dataset.id; 
+                    // we assigned a number to the dataset of each square in the CREATEBOARD function (how both player games boards are painted programmatically)
+                    // pass the server a notification and the shotFired data 
+                    socket.emit('fire', shotFired); 
+                    //! Now we have to go back to the server, and do something with this message & data 
+                }
+            }); 
+        })
+
+        // On fire RECEIVED 
+        socket.on('fire', id => {
+            enemyGo(id); 
+            // isolate the selected square (the one fired upon)
+            const square = userSquares[id]; 
+            // and emit its class list, that way we can see if it contains any of the 'cruiser-' 'submarine-' etc class names
+            socket.emit('fire-reply', square.classList); 
+            playGameMulti(socket); 
+        })
+
 
         function playerConnectedOrDisconnected(num) {
             //? What are we doing here? 
@@ -115,7 +141,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // the expression ${parseInt(num) + 1} will grab the users playerNum, assigned to them from the connections array. 
             // This is ZERO indexed, and the two HTML elements we made (divs with class "player p1" or "player p2") are first indexed
             // depending on what connection in the `connections` array that player is occupying, their 'ready' status will be displayed in the correct html element
-            let player = `.p${parseInt(num) + 1}`
+            let player = `.p${parseInt(num) + 1}`; 
             // use the captured string to isolate the <span> element inside the element with classname "connected" and classname "p1" or "p2" in the body 
             document.querySelector(`${player} .connected span`).classList.toggle('green'); 
             // to let the the player know which player they are (1 or 2), make the font style bold
@@ -127,17 +153,12 @@ document.addEventListener("DOMContentLoaded", () => {
     function startSinglePlayer() {
         // to start we set the game mode appropriately 
         gameMode = "singlePlayer"; 
-        //! now we need to change some things! Right now the computer ships are being generated and placed on the board in the JS below 
-        //! but we need to move that functionality to this helper function - since we only want computer ships to be generated in single player mode! 
-        // prev. line 168 
+        // generate computer ships
         generate(shipArray[0]);
         generate(shipArray[1]);
         generate(shipArray[2]);
         generate(shipArray[3]);
         generate(shipArray[4]);
-
-        //! the startButton also needs needs to be moved to this single player mode 
-        // prev. line 328
         startButton.addEventListener('click', playGameSingle); 
     }
 

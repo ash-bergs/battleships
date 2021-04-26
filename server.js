@@ -85,5 +85,13 @@ io.on("connection", socket => {
         }
         socket.emit("check-players", players); 
     })
+
+    // on fire received 
+    socket.on("fire", id => {
+        console.log(`Shot fired from ${playerIndex}`, id); 
+
+        // emit the move to the other player 
+        socket.broadcast.emit('fire', id); 
+    })
 })
 
