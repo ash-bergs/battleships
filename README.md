@@ -39,3 +39,10 @@ Once all the ships have been sunk, which we decide in the `checkForWins` functio
 ----
 
 ### What I've learned: 
+
+Shortcuts: 
+
+These seem like little things, but every keyboard shortcut I learn makes me feel a little more like a wizard 🧙‍♂️ 
+
+When changing a function or variable name: Select the word and press F2 (windows) to update all the references to that object at once! 
+

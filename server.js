@@ -93,5 +93,20 @@ io.on("connection", socket => {
         // emit the move to the other player 
         socket.broadcast.emit('fire', id); 
     })
+
+    // on fire reply 
+    socket.on("fire-reply", square => {
+        console.log(square); 
+
+        // forward the reply to the enemy player 
+        socket.broadcast.emit("fire-reply", square); 
+    })
+
+    // Timeout connections 
+    setTimeout(() => {
+        connections[playerIndex] = null; 
+        socket.emit("timeout"); 
+        socket.disconnect(); 
+    }, 600000) // 10 minute limit
 })
 
