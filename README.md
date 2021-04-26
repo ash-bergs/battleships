@@ -34,13 +34,53 @@ Once all the ships have been sunk, which we decide in the `checkForWins` functio
 
 - The computer always gets a hit. The logic of the computerGo functions needs refactoring. 
 - The `checkForWins` function doesn't seem to be working. I wonder why 🤔 
+> Update: `checkForWins` wasn't working because I didn't call it anywhere.... 🤦‍♀️🤦‍♀️🤦‍♀️
 - When the user ships are rotated the stay in a column flow and overflow the parent div. This just looks bad and I should fix it. 
+
+----
+
+## Phase Two: Multiplayer Player (Vanilla JS, Socket.io, Express)
+
+Now the project is multiplayer, and hosted on Heroku [here](https://aberg-battleships.herokuapp.com/)
+
+Minor changes have been made to the HTML markup, adding 2 containers to visually indicate player number and readiness status. With class names `player` and `p1`/`p2` respectively.  When a user arrives at the page they can select the game mode by clicking a `Single Player` or `Multiplayer` button. Single player mode works as Phase One outlines. 
+
+Selecting Multiplayer will trigger a cascade of side effects, instantiating communication through the socket.io API. First a player will be connected by searching the available connections, of which there are only 2 currently. If a connection is free, the player is connected and invited to place their ships. If they fail to place all their ships and press the `Start Game` button they'll be prompted to do so. 
+
+![initial connect screenshot](https://i.ibb.co/yy8dDB3/JSbattleships-initial-connect.jpg)
+
+![gameplay screenshot](https://i.ibb.co/g657SLR/JSbattelships-place-all-ships.jpg)
+
+If Player 1 readies before Player 2 even arrives, there is no problem, this will be checked for in the `playerReady` function. This function parses the `connections` array, updating the UI to visually indicate when players are connected and all their ships have been placed (and they've clicked the `Start Game` button). 
+
+![player 2 initial connect](https://i.ibb.co/0jJC2sn/JSbattleships-player2-initial-connect.jpg)
+
+As the game progresses users will be notified when their ships have been sunk, or when they sink an enemy ship. 
+
+![gameplay screenshot](https://i.ibb.co/Bck4w4V/JSbattleships-game-play.jpg)
+
+Players are connected through Socket.io. Per the docs "Socket.IO is a library that enables real-time, bidirectional and event-based communication between the browser and the server." The library works by utilizing a NodeJS server to achieve fast, turn-based events that update in realtime. These two users will be directly connected through the NodeJS server, and communicating through the use of socket.io's emitters. Emitters allow us to send messages simultaneously to both clients, or selectively to one or the other. 
+
+----
+
+## Phase Two: Reflections 
+
+### Current Problems: 
+
+There are a handful of bugs in the build right now that I need to solve for. 
+
+- Single Player mode doesn't end when it's supposed to. I suspect I'm calling `checkForWins` in the wrong place in the code, or I need to be calling it in an additional location. 
+- There's a bug with the submarine that I can't figure out. The first div of the submarinee doesn't register as a "hit", and the square is green when it should be red. 
+
+![submarine bug 1](https://i.ibb.co/bRD48J7/JSbattleships-submarine-bug.jpg) ![submarine bug 2](https://i.ibb.co/KzcY0C1/JSbattleships-submarine-bug2.jpg)
+
+- 👆 Because the code is such a monolith (solving for this might help me find the answer to my problem 🤔) there's a lot to dig through to solve this one. 
 
 ----
 
 ### What I've learned: 
 
-Shortcuts: 
+Keyboard Shortcuts: 
 
 These seem like little things, but every keyboard shortcut I learn makes me feel a little more like a wizard 🧙‍♂️ 
 
