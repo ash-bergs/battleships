@@ -346,6 +346,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     
     //* Here is where the most stuff is going to happen! 
+
+    //! Phase Three (styles) note: We want the ships to be curved at the ends like they appear on the user's grid (before placing)
+    // to do that we need to know if a ship is vertical or horizontal 
+    // We'll assign those classes (that will tell us the orientation of ship) programmatically here in the JS 
     function dragDrop() {
         let shipNameWithLastId = draggedShip.lastChild.id; 
         // we are slicing the id we just grabbed 👆 
@@ -374,14 +378,22 @@ document.addEventListener("DOMContentLoaded", () => {
         // IF the ship is horizontal, and the LASTSHIPID of the selected ship doesn't include (i.e. fall into) the NOT ALLOWED squares, then....
         if (isHorizontal && !newNotAllowedHorizontal.includes(shipLastId)) {
             for (let i=0; i<draggedShipLength; i++) {
+                // to figure out if the div is the first or last child (so we know which divs to add border radius to) init directionClass variable
+                let directionClass; 
+                if (i === 0) directionClass = "start"; 
+                if (i === draggedShipLength - 1) directionClass = "end"; 
                 // handling adding the 'taken' and proper class names to the userGrid when we drop a new ship onto them
-                userSquares[parseInt(this.dataset.id) - selectedShipIndex + i].classList.add('taken', shipClass); 
+                userSquares[parseInt(this.dataset.id) - selectedShipIndex + i].classList.add('taken', 'horizontal', directionClass, shipClass); 
             }
         } else if (!isHorizontal && !newNotAllowedVertical.includes(shipLastId)) {
             for (let i=0; i<draggedShipLength; i++) {
+                 // to figure out if the div is the first or last child (so we know which divs to add border radius to) init directionClass variable
+                 let directionClass; 
+                 if (i === 0) directionClass = "start"; 
+                 if (i === draggedShipLength - 1) directionClass = "end"; 
                 // we're not incrementing by one this time... these ships stack
                 // so we increment by TEN - the number we already set in the WIDTH variable - a handy way to remember its purpose 
-                userSquares[parseInt(this.dataset.id) - selectedShipIndex + width*i].classList.add('taken', shipClass); 
+                userSquares[parseInt(this.dataset.id) - selectedShipIndex + width*i].classList.add('taken', 'vertical', directionClass, shipClass); 
             }
         } else return; 
         

@@ -107,7 +107,19 @@ style.css is refactored:
 
 ### What I've learned: 
 
-Keyboard Shortcuts: 
+- Programmatically adding class names: 
+
+To be fair, I knew how to do this before, but this project helped me learn a lot about how to take advantage of this ability to control and style hard to reason problems. 
+
+For instance, when styling the ships to have a border radius on the first and last children, we add multiple class names to each of the ship divs in the JS programmatically: 
+
+![app.js function dragDrop](https://i.ibb.co/ZN4sfJf/jsbattleships-fn-Drag-Drop.jpg)
+
+When we inspect the elements through the browser, we'll see the classnames added to the correct children: 
+
+![CSS inspect screenshot](https://i.ibb.co/LgzSV8T/jsbattleships-classnames-inspect.png)
+
+- Keyboard Shortcuts: 
 
 These seem like little things, but every keyboard shortcut I learn makes me feel a little more like a wizard 🧙‍♂️ 
 
