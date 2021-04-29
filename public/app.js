@@ -22,8 +22,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const turnDisplay = document.querySelector('#whose-go');
     const infoDisplay = document.querySelector('#info');
     //* game mode buttons 
-    const singlePlayerButton = document.querySelector('#singlePlayerButton');
-    const multiPlayerButton = document.querySelector('#multiPlayerButton');
     // Variables to help the game logic at the bottom 
     let isGameOver = false; 
     let currentPlayer = 'user'; 
@@ -33,7 +31,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     //! start socket.io actions
     // tracking several game properties/assigning default values
-    let gameMode = ""; 
     let playerNum = 0; 
     let ready = false; 
     let enemyReady = false; 
@@ -41,16 +38,63 @@ document.addEventListener("DOMContentLoaded", () => {
     let allShipsPlaced = false; 
     let shotFired = -1; 
 
-    //* event listeners for single and multi player buttons 
-    // Single player mode 
-    singlePlayerButton.addEventListener("click", startSinglePlayer); 
-    multiPlayerButton.addEventListener("click", startMultiPlayer); 
+    // Ships 
+    // This array contains all of the ships in the game, and their possible position depending on if they are rotated or not
+    // directions are given as if 'painting' onto the screen using the 10X10 grid we created in the displays 
+    const shipArray = [
+        {
+            name: 'destroyer', 
+            directions: [
+                [0, 1], // vertical - stacked NEXT to each other
+                [0, width] // horizontal - 10 would be the first square in the next row - stack ON TOP of each other
+            ]   
+        }, 
+        {
+            name: 'submarine', 
+            directions: [
+                [0, 1, 2], 
+                [0, width, width*2]
+            ]
+        }, 
+        {
+            name: 'cruiser', 
+            directions: [
+                [0, 1, 2], 
+                [0, width, width*2]
+            ]
+        }, 
+        {
+            name: 'battleship', 
+            directions: [
+                [0, 1, 2, 3], 
+                [0, width, width*2, width*3]
+            ]
+        }, 
+        {
+            name: 'carrier', 
+            directions: [
+                [0, 1, 2, 3, 4], 
+                [0, width, width*2, width*3, width*4]
+            ]
+        }
+    ];
+    
+    // Calling the function we built to make a grid, passing in the arguments we need! 
+    createBoard(userGrid, userSquares, width); 
+    createBoard(computerGrid, computerSquares, width); 
+
+    // Previously we had event listeners on two buttons that were always present 
+    // now game mode will be selected and set by the user from the splash page (index.html)
+    // here we'll just check for whatever it is set to to continue 
+    if (gameMode === 'singlePlayer') {
+        startSinglePlayer(); 
+    } else {
+        startMultiPlayer(); 
+    }
 
     // Multiplayer 
     function startMultiPlayer() {
-        gameMode = "multiPlayer"
-        // we only want to use socket when we're in multiplayer mode 
-        // io comes from the script that we load in index.html (below the stylesheet link)
+        // socket comes from the script that we load in index.html (below the stylesheet link)
         const socket = io(); 
  
         // get player # 
@@ -161,8 +205,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Single player 
     function startSinglePlayer() {
-        // to start we set the game mode appropriately 
-        gameMode = "singlePlayer"; 
         // generate computer ships
         generate(shipArray[0]);
         generate(shipArray[1]);
@@ -184,51 +226,6 @@ document.addEventListener("DOMContentLoaded", () => {
             squares.push(square); 
         }
     }; 
-
-    // Calling the function we built to make a grid, passing in the arguments we need! 
-    createBoard(userGrid, userSquares, width); 
-    createBoard(computerGrid, computerSquares, width); 
-
-    // Ships 
-    // This array contains all of the ships in the game, and their possible position depending on if they are rotated or not
-    // directions are given as if 'painting' onto the screen using the 10X10 grid we created in the displays 
-    const shipArray = [
-        {
-            name: 'destroyer', 
-            directions: [
-                [0, 1], // vertical - stacked NEXT to each other
-                [0, width] // horizontal - 10 would be the first square in the next row - stack ON TOP of each other
-            ]   
-        }, 
-        {
-            name: 'submarine', 
-            directions: [
-                [0, 1, 2], 
-                [0, width, width*2]
-            ]
-        }, 
-        {
-            name: 'cruiser', 
-            directions: [
-                [0, 1, 2], 
-                [0, width, width*2]
-            ]
-        }, 
-        {
-            name: 'battleship', 
-            directions: [
-                [0, 1, 2, 3], 
-                [0, width, width*2, width*3]
-            ]
-        }, 
-        {
-            name: 'carrier', 
-            directions: [
-                [0, 1, 2, 3, 4], 
-                [0, width, width*2, width*3, width*4]
-            ]
-        }
-    ]; 
 
     // Draws the computer's ships in "random" locations 
     function generate(ship) {
@@ -345,10 +342,14 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     
     function dragLeave() {
-        console.log('drag leave'); 
+        //console.log('drag leave'); 
     }
     
     //* Here is where the most stuff is going to happen! 
+
+    //! Phase Three (styles) note: We want the ships to be curved at the ends like they appear on the user's grid (before placing)
+    // to do that we need to know if a ship is vertical or horizontal 
+    // We'll assign those classes (that will tell us the orientation of ship) programmatically here in the JS 
     function dragDrop() {
         let shipNameWithLastId = draggedShip.lastChild.id; 
         // we are slicing the id we just grabbed 👆 
@@ -377,14 +378,22 @@ document.addEventListener("DOMContentLoaded", () => {
         // IF the ship is horizontal, and the LASTSHIPID of the selected ship doesn't include (i.e. fall into) the NOT ALLOWED squares, then....
         if (isHorizontal && !newNotAllowedHorizontal.includes(shipLastId)) {
             for (let i=0; i<draggedShipLength; i++) {
+                // to figure out if the div is the first or last child (so we know which divs to add border radius to) init directionClass variable
+                let directionClass; 
+                if (i === 0) directionClass = "start"; 
+                if (i === draggedShipLength - 1) directionClass = "end"; 
                 // handling adding the 'taken' and proper class names to the userGrid when we drop a new ship onto them
-                userSquares[parseInt(this.dataset.id) - selectedShipIndex + i].classList.add('taken', shipClass); 
+                userSquares[parseInt(this.dataset.id) - selectedShipIndex + i].classList.add('taken', 'horizontal', directionClass, shipClass); 
             }
         } else if (!isHorizontal && !newNotAllowedVertical.includes(shipLastId)) {
             for (let i=0; i<draggedShipLength; i++) {
+                 // to figure out if the div is the first or last child (so we know which divs to add border radius to) init directionClass variable
+                 let directionClass; 
+                 if (i === 0) directionClass = "start"; 
+                 if (i === draggedShipLength - 1) directionClass = "end"; 
                 // we're not incrementing by one this time... these ships stack
                 // so we increment by TEN - the number we already set in the WIDTH variable - a handy way to remember its purpose 
-                userSquares[parseInt(this.dataset.id) - selectedShipIndex + width*i].classList.add('taken', shipClass); 
+                userSquares[parseInt(this.dataset.id) - selectedShipIndex + width*i].classList.add('taken', 'vertical', directionClass, shipClass); 
             }
         } else return; 
         

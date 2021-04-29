@@ -1,152 +1,272 @@
+/* Font family: 'Bangers', cursive; */
+/* Body font: font-family: 'Montserrat', sans-serif; */
+
+body {
+    margin: 0;
+    background-color: #f3f3f3;
+    overflow-x: hidden;
+}
+
+/* Makes sizing all the elements a little easier to reason about */
+/* font family added here to give EVERYTHING the Montserrat family unless otherwise specified */
+*, *::before, *::after {
+    box-sizing: border-box;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.splash-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 66vh;
+}
+
+.splash-title {
+    font-family: 'Bangers', cursive;
+    font-size: 10rem;
+}
+
+.splash-battleship-image {
+    position: absolute;
+    bottom: 5vh;
+    left: 20vw;
+    width: 100%;
+    z-index: -10;
+    /*transform: rotateY(180deg);*/
+    pointer-events: none;
+    opacity: .55;
+}
+
+.btn {
+    font-size: inherit;
+    /* hsl = hue, saturation, lightness */
+    background-color: hsl(30, 100%, 50%);
+    padding: .5em 1em; 
+    outline: none; 
+    border: none; 
+    text-decoration: none;
+    cursor: pointer; 
+    border-radius: .2em;
+    color: #333; 
+}
+
+.btn:hover, .btn:focus {
+    background-color: hsl(30, 100%, 35%);
+}
+
+.splash-btn {
+    font-size: 2rem;
+    margin-left: 2rem;
+}
+
+.splash-btn:first-child {
+    margin-left: 0;
+}
+
+
+/*Player Gamboards*/
+
 .container {
     display: flex;
+    justify-content: center;
+    width: 100%;
 }
 
-.grid-computer {
-    width: 400px; 
-    height: 400px; 
-    display: flex;
-    flex-wrap: wrap;
-    background-color: salmon;
-    margin: 20px;
-}
-
-.grid-user {
-    width: 400px; 
-    height: 400px; 
-    display: flex;
-    flex-wrap: wrap;
-    background-color: blue;
-    margin: 20px;
+.battleship-grid {
+    margin: 2vmin;
+    display: grid;
+    background-color: hsl(200, 100%, 50%);
+    grid-template-rows: repeat(10, 4.6vmin);
+    grid-template-columns: repeat(10, 4.6vmin);
 }
 
 
+.battleship-grid div {
+    /* hsla - hue, saturation, lightness, alpha model */
+    /* These colors are an extension of hsl colors with an ALPHA CHANNEL */
+    /* The alpha model defines the opacity as a number between 0.0 and 1.0 */
+    border: 1px solid hsla(0, 0%, 100%, .2);
+}
 
 .grid-display {
-    width: 400px; 
-    height: 400px; 
-    margin: 20px; 
-    background-color: yellowgreen;
+    display: flex;
 }
 
-.grid div {
-    width: 40px; 
-    height: 40px; 
-    /*background-color: goldenrod;*/
+/* hides the computer ships so the user can't see them */ 
+/* .grid-computer > .taken --> any children in the grid-computer div with class taken */ 
+.grid-computer > .taken {
+    background-color: hsl(200, 100%, 50%) !important;
+    border-radius: 0 imp !important; 
+
 }
+
+
 
 /* SHIPS */
 
-.destroyer-container {
-    width: 80px; 
-    height: 40px; 
+.taken, 
+.ship {
+    background-color: hsl(0, 0%, 80%);
+    /* position must be set to relative so that the `::before` pseudo elements (below) will be placed relative to this block*/
+    position: relative;
+}
+
+/* VERTICAL border radius */
+.taken.start.vertical, 
+.taken.start.vertical::before {
+    border-top-left-radius: 50%;
+    border-top-right-radius: 50%;
+}
+
+.taken.end.vertical, 
+.taken.end.vertical::before {
+    border-bottom-left-radius: 50%;
+    border-bottom-right-radius: 50%;
+}
+
+/* HORIZONTAL border radius */
+
+.taken.start.horizontal, 
+.taken.start.horizontal::before {
+    border-top-left-radius: 50%;
+    border-bottom-left-radius: 50%;
+}
+
+.taken.end.horizontal, 
+.taken.end.horizontal::before {
+    border-top-right-radius: 50%;
+    border-bottom-right-radius: 50%;
+}
+
+/* Adds an animation effect to the ships 🚢🚢🚢 */ 
+/* using the `before` PSEUDO ELEMENT */ 
+.taken.vertical::before, 
+.taken.horizontal::before {
+    content: ""; 
+    position: absolute;
+    border: .3vmin solid white; 
+    top: -1px; 
+    left: -1px; 
+    bottom: -1px; 
+    right: -1px;
+}
+
+/* Gets rid of the lines in between the before element borders */ 
+.taken.vertical::before {
+    border-top: none; 
+    border-bottom: none;
+
+    animation: ripplesX 3s linear infinite;
+}
+
+.taken.horizontal::before {
+    border-left: none;
+    border-right: none;
+
+    animation: ripplesY 3s linear infinite; 
+}
+
+/* actual animations code */ 
+@keyframes ripplesX {
+    0% {
+        opacity: 1;
+        transform: scaleX(1);
+    }
+
+    100% {
+        opacity: 0;
+        transform: scaleX(1.5);
+    }
+}
+
+@keyframes ripplesY {
+    0% {
+        opacity: 1;
+        transform: scaleY(1);
+    }
+
+    100% {
+        opacity: 0;
+        transform: scaleY(1.5);
+    }
+}
+
+
+/* this selector: .ship > div selects all divs inside a ship class element */
+/* this rule is set to dynamically size the user's ships, so that they're never smaller or larger than the game boards */
+.ship > div {
+    width: 4.6vmin; 
+    height: 4.6vmin; 
+}
+
+.ship {
     display: flex;
-    margin: 10px;
-    background-color: turquoise;
+    flex-wrap: wrap;
+    margin: 1vmin; 
+    width: calc(4.6vmin * var(--width, 1)); 
+    height: calc(4.6vmin * var(--height, 1)); 
+    border-radius: 2.3vmin;
+}
+
+.destroyer-container {
+    /* --width is a CUSTOM VARIABLE, set above in the `ship` class */
+    --width: 2; 
 }
 
 .destroyer-container-vertical {
-    width: 40px; 
-    height: 80px; 
-    display: flex;
-    flex-wrap: wrap;
-    margin: 10px;
-    background-color: turquoise;
-}
-
-.destroyer {
-    background-color: turquoise;
+    --width: 1;
+    --height: 2;
 }
 
 .submarine-container {
-    width: 120px; 
-    height: 40px; 
-    display: flex;
-    margin: 10px;
-    background-color: pink;
+    --width: 3; 
 }
 
 .submarine-container-vertical {
-    width: 40px; 
-    height: 120px; 
-    display: flex;
-    flex-wrap: wrap;
-    margin: 10px;
-    background-color: pink;
-}
-
-
-.submarine {
-    background-color: pink;
+    --width: 1;
+    --height: 3; 
 }
 
 .cruiser-container {
-    width: 120px; 
-    height: 40px; 
-    display: flex;
-    margin: 10px;
-    background-color: lightslategray;
+    --width: 3; 
 }
 
 .cruiser-container-vertical {
-    width: 40px; 
-    height: 120px; 
-    display: flex;
-    flex-wrap: wrap;
-    margin: 10px;
-    background-color: lightslategray;
-}
-
-.cruiser {
-    background-color: lightslategray;
+    --width: 1;
+    --height: 3; 
 }
 
 .battleship-container {
-    width: 160px; 
-    height: 40px; 
-    display: flex;
-    margin: 10px;
-    background-color: orangered;
+    --width: 4; 
 }
 
 .battleship-container-vertical {
-    width: 40px; 
-    height: 160px; 
-    display: flex;
-    flex-wrap: wrap;
-    margin: 10px;
-    background-color: orangered;
-}
-
-.battleship {
-    background-color: orangered;
+    --width: 1;
+    --height: 4; 
 }
 
 .carrier-container {
-    width: 200px; 
-    height: 40px; 
-    display: flex;
-    margin: 10px;
-    background-color: greenyellow;
+    --width: 5; 
 }
 
 .carrier-container-vertical {
-    width: 40px; 
-    height: 200px; 
-    display: flex;
-    flex-wrap: wrap;
-    margin: 10px;
-    background-color: greenyellow;
+    --width: 1;
+    --height: 5; 
 }
 
-.carrier {
-    background-color: greenyellow;
+/* User INFO panel - displays the rotate and start buttons, and info on whose turn it is */ 
+
+.hidden-info {
+    font-size: 1.5rem;
+    align-items: center;
+    flex-direction: column;
 }
 
-.ship div {
-    width: 40px; 
-    height: 40px; 
+info-text {
+    margin: 1rem;
 }
+
 
 /* HOT or MISS styles - visualized during gameplay */
 

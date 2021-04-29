@@ -79,11 +79,51 @@ There are a handful of bugs in the build right now that I need to solve for.
 
 ----
 
+## Phase Three: Style 💅😎 
+
+We have functionality, now it's time to make things pretty. Styling the page will remove some concerns for us, like the bugginess of the Single and Multiplayer buttons, by adding a splash page, and separating concerns, i.e. breaking the code up into two separate html files. Now the `gameMode` will be handled *based on URL*
+
+![splash page screenshot](https://i.ibb.co/nry3k4c/battleships-screen.jpg)
+
+index.html is now a splash page was so that the first thing a user must do is select Single Player or Multiplayer, these buttons are essentially the only things on the splash page. 
+
+singlePlayer.html (previously index.html) is refactored: 
+    - Since we don't need `socket.io` at all in a Single Player game, we've removed that from the html markup. 
+    - A script now sets the `gameMode` (essential for the JS to know what functions to fire and when) at the top of the page and removes need for the Single Player and Multiplayer buttons 
+    - The Single Player and Multiplayer buttons are removed from the markup 
+    - Player 1 and Player 2 containers removed from the markup
+
+app.js is refactored: 
+    - Removed the `gameMode` variable in app.js - this will no longer be set by the JS found there, but by the URL (the button the user clicks)
+    - Also removed all places the `gameMode` was being *set* in app.js - in the `startSinglePlayer` and `startMultiPlayer` function
+    - Event listeners and query selectors for the original buttons are removed 
+    - `ships` array and `creatBoard` calls had to be moved higher up in the JS (undefined errors!) 
+
+style.css is refactored: 
+    - `grid-user` and `grid-computer` are removed, new `battleship-grid` class and rules define the look of these elements 
+    - CSS Grid introduced to the styles in the `battleship-grid` class, as a result the individual divs in the each player's gameboard no longer need a hardcoded width and height 
+    - 
+
+
 ### What I've learned: 
 
-Keyboard Shortcuts: 
+- Programmatically adding class names: 
+
+To be fair, I knew how to do this before, but this project helped me learn a lot about how to take advantage of this ability to control and style hard to reason problems. 
+
+For instance, when styling the ships to have a border radius on the first and last children, we add multiple class names to each of the ship divs in the JS programmatically: 
+
+![app.js function dragDrop](https://i.ibb.co/ZN4sfJf/jsbattleships-fn-Drag-Drop.jpg)
+
+When we inspect the elements through the browser, we'll see the classnames added to the correct children: 
+
+![CSS inspect screenshot](https://i.ibb.co/LgzSV8T/jsbattleships-classnames-inspect.png)
+
+- Keyboard Shortcuts: 
 
 These seem like little things, but every keyboard shortcut I learn makes me feel a little more like a wizard 🧙‍♂️ 
 
 When changing a function or variable name: Select the word and press F2 (windows) to update all the references to that object at once! 
+
+Want to move a whole line of code up or down?: Highlight the selected code, then hold ALT and ⬆⬇⬅➡ 
 
