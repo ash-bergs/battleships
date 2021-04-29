@@ -36,6 +36,11 @@ body {
     text-decoration: none;
     cursor: pointer; 
     border-radius: .2em;
+    color: #333; 
+}
+
+.btn:hover, .btn:focus {
+    background-color: hsl(30, 100%, 35%);
 }
 
 .splash-btn {
