@@ -1,10 +1,20 @@
 # JS Battleships 
 
-JS battleships, at this moment, is a vanilla JavaScript game of Battleships, the riveting duel between friends to sink the others fleet. 
+<div id="top"></div>
+
+JS Battleships brings the fun of the classic, table-top Battleships game to the computer! Play against the computer, or invite a friend for a riveting duel. 
+
+This project builds upon vanilla JavaScript, CSS and HTML with NodeJS, Express and Socket.io to offer two game modes. The build was broken up into three phases: 
+
+    - <a href="#phaseOne">Phase One</a> - The foundation of the game, in phase one we build the HTML markup and the JS functionality 
+    - <a href="#phaseTwo">Phase Two</a> - Multiplayer is added with NodeJS, Express and Socket.io. Socket allows us to set up quick, realtime communication between two players. 
+    - <a href="#phaseThree">Phase Three</a> - THE FUN PART! In this phase we refactor and modularize some of the code and begin styling it both with CSS and programmatically through the JS. Animations, CSS Grid, hsl/hsla values and more make an appearance. 
 
 ![Battleships-box](http://static1.squarespace.com/static/5a0d8676f6576e0f3648d5d2/5a1057c7f9619a64a2b90692/5c5ab434fa0d606e5b74daa0/1549532097388/battleship-game-classic.jpg?format=1500w)
 
 ----
+
+<div id="phaseOne"></div>
 
 ## Phase One: Single Player (Vanilla JS, HTML & CSS)
 
@@ -36,8 +46,12 @@ Once all the ships have been sunk, which we decide in the `checkForWins` functio
 - The `checkForWins` function doesn't seem to be working. I wonder why 🤔 
 > Update: `checkForWins` wasn't working because I didn't call it anywhere.... 🤦‍♀️🤦‍♀️🤦‍♀️
 - When the user ships are rotated the stay in a column flow and overflow the parent div. This just looks bad and I should fix it. 
+> This was solved for in <a href="#phaseThree">Phase Three</a>
 
 ----
+
+<div id="phaseTwo"></div>
+<a href="#top">Return to top</a>
 
 ## Phase Two: Multiplayer Player (Vanilla JS, Socket.io, Express)
 
@@ -79,6 +93,9 @@ There are a handful of bugs in the build right now that I need to solve for.
 
 ----
 
+<div id="phaseThree"></div>
+<a href="#top">Return to top</a>
+
 ## Phase Three: Style 💅😎 
 
 We have functionality, now it's time to make things pretty. Styling the page will remove some concerns for us, like the bugginess of the Single and Multiplayer buttons, by adding a splash page, and separating concerns, i.e. breaking the code up into two separate html files. Now the `gameMode` will be handled *based on URL*
@@ -88,22 +105,25 @@ We have functionality, now it's time to make things pretty. Styling the page wil
 index.html is now a splash page was so that the first thing a user must do is select Single Player or Multiplayer, these buttons are essentially the only things on the splash page. 
 
 singlePlayer.html (previously index.html) is refactored: 
+
     - Since we don't need `socket.io` at all in a Single Player game, we've removed that from the html markup. 
     - A script now sets the `gameMode` (essential for the JS to know what functions to fire and when) at the top of the page and removes need for the Single Player and Multiplayer buttons 
     - The Single Player and Multiplayer buttons are removed from the markup 
     - Player 1 and Player 2 containers removed from the markup
 
 app.js is refactored: 
+
     - Removed the `gameMode` variable in app.js - this will no longer be set by the JS found there, but by the URL (the button the user clicks)
     - Also removed all places the `gameMode` was being *set* in app.js - in the `startSinglePlayer` and `startMultiPlayer` function
     - Event listeners and query selectors for the original buttons are removed 
     - `ships` array and `creatBoard` calls had to be moved higher up in the JS (undefined errors!) 
 
 style.css is refactored: 
+
     - `grid-user` and `grid-computer` are removed, new `battleship-grid` class and rules define the look of these elements 
     - CSS Grid introduced to the styles in the `battleship-grid` class, as a result the individual divs in the each player's gameboard no longer need a hardcoded width and height 
-    - 
 
+---- 
 
 ### What I've learned: 
 
@@ -127,3 +147,11 @@ When changing a function or variable name: Select the word and press F2 (windows
 
 Want to move a whole line of code up or down?: Highlight the selected code, then hold ALT and ⬆⬇⬅➡ 
 
+### Current Problems: 
+
+The single player game begins before a user places all of their ships... 🤔 
+
+I think i want to make the theme darker, and add the option to use a light theme for those with halation and other optic problems 
+
+
+<a href="#top">Return to top</a>
