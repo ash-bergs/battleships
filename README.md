@@ -91,7 +91,7 @@ There are a handful of bugs in the build right now that I need to solve for.
 ![submarine bug 1](https://i.ibb.co/bRD48J7/JSbattleships-submarine-bug.jpg) ![submarine bug 2](https://i.ibb.co/KzcY0C1/JSbattleships-submarine-bug2.jpg)
 
 - 👆 Because the code is such a monolith (solving for this might help me find the answer to my problem 🤔) there's a lot to dig through to solve this one. 
-- Obviously, the project isn't very visually stunning right now... but that's up next! 
+> The checkForWins function was the root of the problem in this case. I was not assigning the right count to check for submarine hits (2 not 3)
 
 ----
 
