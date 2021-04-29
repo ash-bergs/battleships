@@ -27,6 +27,14 @@ body {
     font-size: 10rem;
 }
 
+.splash-battleship-image {
+    position: absolute;
+    bottom: 5vh;
+    left: 20vw;
+    width: 100%;
+    z-index: -10;
+}
+
 .btn {
     /* hsl = hue, saturation, lightness */
     background-color: hsl(30, 100%, 50%);
