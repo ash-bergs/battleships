@@ -342,7 +342,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     
     function dragLeave() {
-        console.log('drag leave'); 
+        //console.log('drag leave'); 
     }
     
     //* Here is where the most stuff is going to happen! 
