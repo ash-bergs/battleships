@@ -87,3 +87,5 @@ These seem like little things, but every keyboard shortcut I learn makes me feel
 
 When changing a function or variable name: Select the word and press F2 (windows) to update all the references to that object at once! 
 
+Want to move a whole line of code up or down?: Highlight the selected code, then hold ALT and ⬆⬇⬅➡ 
+

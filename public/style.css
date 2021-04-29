@@ -1,9 +1,65 @@
+/* Font family: 'Bangers', cursive; */
+/* Body font: font-family: 'Montserrat', sans-serif; */
+
+body {
+    margin: 0;
+    background-color: #f3f3f3;
+    overflow-x: hidden;
+}
+
+/* Makes sizing all the elements a little easier to reason about */
+/* font family added here to give EVERYTHING the Montserrat family unless otherwise specified */
+*, *::before, *::after {
+    box-sizing: border-box;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.splash-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 66vh;
+}
+
+.splash-title {
+    font-family: 'Bangers', cursive;
+    font-size: 10rem;
+}
+
+.btn {
+    /* hsl = hue, saturation, lightness */
+    background-color: hsl(30, 100%, 50%);
+    padding: .5em 1em; 
+    outline: none; 
+    border: none; 
+    text-decoration: none;
+    cursor: pointer; 
+    border-radius: .2em;
+}
+
+.splash-btn {
+    font-size: 2rem;
+    margin-left: 2rem;
+}
+
+.splash-btn:first-child {
+    margin-left: 0;
+}
+
+
+
+
+
+
+
+
 .container {
     display: flex;
 }
 
 .grid-computer {
-    width: 400px; 
+    width: 400px;     
     height: 400px; 
     display: flex;
     flex-wrap: wrap;
