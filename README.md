@@ -6,9 +6,11 @@ JS Battleships brings the fun of the classic, table-top Battleships game to the 
 
 This project builds upon vanilla JavaScript, CSS and HTML with NodeJS, Express and Socket.io to offer two game modes. The build was broken up into three phases: 
 
-    - <a href="#phaseOne">Phase One</a> - The foundation of the game, in phase one we build the HTML markup and the JS functionality 
-    - <a href="#phaseTwo">Phase Two</a> - Multiplayer is added with NodeJS, Express and Socket.io. Socket allows us to set up quick, realtime communication between two players. 
-    - <a href="#phaseThree">Phase Three</a> - THE FUN PART! In this phase we refactor and modularize some of the code and begin styling it both with CSS and programmatically through the JS. Animations, CSS Grid, hsl/hsla values and more make an appearance. 
+<a href="#phaseOne">Phase One</a> - The foundation of the game, in phase one we build the HTML markup and the JS functionality 
+
+<a href="#phaseTwo">Phase Two</a> - Multiplayer is added with NodeJS, Express and Socket.io. Socket allows us to set up quick, realtime communication between two players. 
+
+<a href="#phaseThree">Phase Three</a> - THE FUN PART! In this phase we refactor and modularize some of the code and begin styling it both with CSS and programmatically through the JS. Animations, CSS Grid, hsl/hsla values and more make an appearance. 
 
 ![Battleships-box](http://static1.squarespace.com/static/5a0d8676f6576e0f3648d5d2/5a1057c7f9619a64a2b90692/5c5ab434fa0d606e5b74daa0/1549532097388/battleship-game-classic.jpg?format=1500w)
 
