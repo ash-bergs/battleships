@@ -85,131 +85,82 @@ body {
     /* hsla - hue, saturation, lightness, alpha model */
     /* These colors are an extension of hsl colors with an ALPHA CHANNEL */
     /* The alpha model defines the opacity as a number between 0.0 and 1.0 */
-    border: 1px solid hsla(0, 0%, 100%);
+    border: 1px solid hsla(0, 0%, 100%, .2);
 }
 
-
-
 .grid-display {
-    width: 400px; 
-    height: 400px; 
-    margin: 20px; 
-    background-color: yellowgreen;
+    display: flex;
 }
 
 
 
 /* SHIPS */
 
-.destroyer-container {
-    width: 80px; 
-    height: 40px; 
+.taken, 
+.ship {
+    background-color: hsl(0, 0%, 80%);
+}
+
+/* this selector: .ship > div selects all divs inside a ship class element */
+/* this rule is set to dynamically size the user's ships, so that they're never smaller or larger than the game boards */
+.ship > div {
+    width: 4.6vmin; 
+    height: 4.6vmin; 
+}
+
+.ship {
     display: flex;
-    margin: 10px;
-    background-color: turquoise;
+    flex-wrap: wrap;
+    margin: 1vmin; 
+    width: calc(4.6vmin * var(--width, 1)); 
+    height: calc(4.6vmin * var(--height, 1)); 
+    border-radius: 2.3vmin;
+}
+
+.destroyer-container {
+    /* --width is a CUSTOM VARIABLE, set above in the `ship` class */
+    --width: 2; 
 }
 
 .destroyer-container-vertical {
-    width: 40px; 
-    height: 80px; 
-    display: flex;
-    flex-wrap: wrap;
-    margin: 10px;
-    background-color: turquoise;
-}
-
-.destroyer {
-    background-color: turquoise;
+    --width: 1;
+    --height: 2;
 }
 
 .submarine-container {
-    width: 120px; 
-    height: 40px; 
-    display: flex;
-    margin: 10px;
-    background-color: pink;
+    --width: 3; 
 }
 
 .submarine-container-vertical {
-    width: 40px; 
-    height: 120px; 
-    display: flex;
-    flex-wrap: wrap;
-    margin: 10px;
-    background-color: pink;
-}
-
-
-.submarine {
-    background-color: pink;
+    --width: 1;
+    --height: 3; 
 }
 
 .cruiser-container {
-    width: 120px; 
-    height: 40px; 
-    display: flex;
-    margin: 10px;
-    background-color: lightslategray;
+    --width: 3; 
 }
 
 .cruiser-container-vertical {
-    width: 40px; 
-    height: 120px; 
-    display: flex;
-    flex-wrap: wrap;
-    margin: 10px;
-    background-color: lightslategray;
-}
-
-.cruiser {
-    background-color: lightslategray;
+    --width: 1;
+    --height: 3; 
 }
 
 .battleship-container {
-    width: 160px; 
-    height: 40px; 
-    display: flex;
-    margin: 10px;
-    background-color: orangered;
+    --width: 4; 
 }
 
 .battleship-container-vertical {
-    width: 40px; 
-    height: 160px; 
-    display: flex;
-    flex-wrap: wrap;
-    margin: 10px;
-    background-color: orangered;
-}
-
-.battleship {
-    background-color: orangered;
+    --width: 1;
+    --height: 4; 
 }
 
 .carrier-container {
-    width: 200px; 
-    height: 40px; 
-    display: flex;
-    margin: 10px;
-    background-color: greenyellow;
+    --width: 5; 
 }
 
 .carrier-container-vertical {
-    width: 40px; 
-    height: 200px; 
-    display: flex;
-    flex-wrap: wrap;
-    margin: 10px;
-    background-color: greenyellow;
-}
-
-.carrier {
-    background-color: greenyellow;
-}
-
-.ship div {
-    width: 40px; 
-    height: 40px; 
+    --width: 1;
+    --height: 5; 
 }
 
 /* HOT or MISS styles - visualized during gameplay */

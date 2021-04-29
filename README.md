@@ -99,6 +99,11 @@ app.js is refactored:
     - Event listeners and query selectors for the original buttons are removed 
     - `ships` array and `creatBoard` calls had to be moved higher up in the JS (undefined errors!) 
 
+style.css is refactored: 
+    - `grid-user` and `grid-computer` are removed, new `battleship-grid` class and rules define the look of these elements 
+    - CSS Grid introduced to the styles in the `battleship-grid` class, as a result the individual divs in the each player's gameboard no longer need a hardcoded width and height 
+    - 
+
 
 ### What I've learned: 
 
