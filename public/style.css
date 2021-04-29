@@ -33,6 +33,9 @@ body {
     left: 20vw;
     width: 100%;
     z-index: -10;
+    /*transform: rotateY(180deg);*/
+    pointer-events: none;
+    opacity: .55;
 }
 
 .btn {

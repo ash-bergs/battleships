@@ -7,23 +7,12 @@
         <link rel="preconnect" href="https://fonts.gstatic.com">
         <link href="https://fonts.googleapis.com/css2?family=Bangers&display=swap" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
-        <script src="/socket.io/socket.io.js"></script>
+        <script>
+            let gameMode = "singlePlayer"
+        </script>
         <script src="app.js" charset="utf-8"></script>
     </head>
     <body>
-
-        <button id="singlePlayerButton">Single Player</button>
-        <button id="multiPlayerButton">Multiplayer</button>
-
-        <div class="player p1">Player 1
-            <div class="connected">Connected<span></span></div>
-            <div class="ready">Ready <span></span></div>
-        </div>
-        <div class="player p2">
-            Player 2
-            <div class="connected">Connected<span></span></div>
-            <div class="ready">Ready <span></span></div>
-        </div>
         <!-- This div holds the grid for us (the user) as well as the computer -->
         <div class="container">
             <div class="grid grid-user"></div>

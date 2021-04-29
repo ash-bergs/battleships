@@ -79,6 +79,25 @@ There are a handful of bugs in the build right now that I need to solve for.
 
 ----
 
+## Phase Three: Style 💅😎 
+
+We have functionality, now it's time to make things pretty. Styling the page will remove some concerns for us, like the bugginess of the Single and Multiplayer buttons, by adding a splash page, and separating concerns, i.e. breaking the code up into two separate html files. Now the `gameMode` will be handled *based on URL*
+
+index.html is now a splash page was so that the first thing a user must do is select Single Player or Multiplayer, these buttons are essentially the only things on the splash page. 
+
+singlePlayer.html (previously index.html) is refactored: 
+    - Since we don't need `socket.io` at all in a Single Player game, we've removed that from the html markup. 
+    - A script now sets the `gameMode` (essential for the JS to know what functions to fire and when) at the top of the page and removes need for the Single Player and Multiplayer buttons 
+    - The Single Player and Multiplayer buttons are removed from the markup 
+    - Player 1 and Player 2 containers removed from the markup
+
+app.js is refactored: 
+    - Removed the `gameMode` variable in app.js - this will no longer be set by the JS found there, but by the URL (the button the user clicks)
+    - Also removed all places the `gameMode` was being *set* in app.js - in the `startSinglePlayer` and `startMultiPlayer` function
+    - Event listeners and query selectors for the original buttons are removed 
+    - `ships` array and `creatBoard` calls had to be moved higher up in the JS (undefined errors!) 
+
+
 ### What I've learned: 
 
 Keyboard Shortcuts: 
