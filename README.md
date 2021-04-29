@@ -83,6 +83,8 @@ There are a handful of bugs in the build right now that I need to solve for.
 
 We have functionality, now it's time to make things pretty. Styling the page will remove some concerns for us, like the bugginess of the Single and Multiplayer buttons, by adding a splash page, and separating concerns, i.e. breaking the code up into two separate html files. Now the `gameMode` will be handled *based on URL*
 
+![splash page screenshot](https://i.ibb.co/nry3k4c/battleships-screen.jpg)
+
 index.html is now a splash page was so that the first thing a user must do is select Single Player or Multiplayer, these buttons are essentially the only things on the splash page. 
 
 singlePlayer.html (previously index.html) is refactored: 
