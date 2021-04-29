@@ -39,6 +39,7 @@ body {
 }
 
 .btn {
+    font-size: inherit;
     /* hsl = hue, saturation, lightness */
     background-color: hsl(30, 100%, 50%);
     padding: .5em 1em; 
@@ -162,6 +163,19 @@ body {
     --width: 1;
     --height: 5; 
 }
+
+/* User INFO panel - displays the rotate and start buttons, and info on whose turn it is */ 
+
+.hidden-info {
+    font-size: 1.5rem;
+    align-items: center;
+    flex-direction: column;
+}
+
+info-text {
+    margin: 1rem;
+}
+
 
 /* HOT or MISS styles - visualized during gameplay */
 
