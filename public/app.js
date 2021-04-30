@@ -469,7 +469,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let carrierCount = 0; 
 
     function revealSquare(classList) {
-        const enemySquare = computerGrid.querySelector(`div[data-id='${shotFired}']`); 
+        const enemySquare = computerGrid.querySelector(`div[data-id='${shotFired}']`);
         const obj = Object.values(classList); 
         if (!enemySquare.classList.contains('boom') && currentPlayer === 'user' && !isGameOver) {
             // if the square has a given ship name among its class names, increment the hit count
@@ -489,9 +489,6 @@ document.addEventListener("DOMContentLoaded", () => {
         } else {
             enemySquare.classList.add('miss'); 
         }
-        // now we need to pass the turn to the computer 
-        // then call the playGame function again... 
-        //TODO write the logic for the computer's go! 
         checkForWins(); 
         currentPlayer = 'enemy'; 
         if (gameMode === "singlePlayer") playGameSingle();
@@ -505,23 +502,26 @@ document.addEventListener("DOMContentLoaded", () => {
     let npcBattleshipCount = 0; 
     let npcCarrierCount = 0; 
 
-    function enemyGo(square) {
-        //! If we're in singlePlayer mode, then the squares/ships for the enemy (i.e. the computer) need to be generated - the 'SQUARE' param will be UNDEFINED 
-        // so to solve for that, we'll define it, with the random number generator we built before 
-        if (gameMode === "singlePlayer") square = Math.floor(Math.random() * userSquares.length); 
-        // if the userSquare at the random number DOESNT contain "boom", then....
-        if (!userSquares[square].classList.contains('boom')) {  
-            userSquares[square].classList.add('boom')
-            if (userSquares[square].classList.contains('destroyer')) npcDestroyerCount++; 
-            if (userSquares[square].classList.contains('submarine')) npcSubmarineCount++;
-            if (userSquares[square].classList.contains('cruiser')) npcCruiserCount++;
-            if (userSquares[square].classList.contains('battleship')) npcBattleshipCount++;
-            if (userSquares[square].classList.contains('carrier')) npcCarrierCount++;
-            checkForWins(); 
-        } else if (gameMode === "singlePlayer") enemyGo(); 
-        currentPlayer = "user"; 
-        turnDisplay.innerHTML = "Your Go"; 
-    }
+  function enemyGo(square) {
+    if (gameMode === 'singlePlayer') square = Math.floor(Math.random() * userSquares.length)
+    //! The computer always getting a hit was solved for here 👇
+    // by checking the randomly selected square that the computer will play, we'll check if it's a. already been selected and is a hit, b. hasn't been selected and ISNT a hit and c. hasn't been selected and IS a hit
+    if (!userSquares[square].classList.contains('boom')) {
+      const hit = userSquares[square].classList.contains('taken')
+      // if the hit variable (resolves to a boolean) ternary decides if it is a hit or a miss
+      // adds the classname after resolving the expression
+      userSquares[square].classList.add(hit ? 'boom' : 'miss')
+      //! part of the problem: I init'd the count variables as npcCarrierCount and so on... but here was referring to them as cpuCarrierCount 🤦‍♀️
+      if (userSquares[square].classList.contains('destroyer')) npcDestroyerCount++
+      if (userSquares[square].classList.contains('submarine')) npcSubmarineCount++
+      if (userSquares[square].classList.contains('cruiser')) npcCruiserCount++
+      if (userSquares[square].classList.contains('battleship')) npcBattleshipCount++
+      if (userSquares[square].classList.contains('carrier')) npcCarrierCount++
+      checkForWins()
+    } else if (gameMode === 'singlePlayer') enemyGo()
+    currentPlayer = 'user'
+    turnDisplay.innerHTML = 'Your Go'
+  }
 
     //* Check for wins! 
     // We know how many squares make up each battleship - so we'll check for that amount in each of the counts we set up. 

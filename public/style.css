@@ -268,17 +268,75 @@ info-text {
 }
 
 
-/* HOT or MISS styles - visualized during gameplay */
+/* HIT or MISS styles - visualized during gameplay */
 
+.miss, 
 .boom {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.boom::after, 
+.miss::after {
+    content: '';
+    position: absolute;
+    border-radius: 100%;
+    height: 2vmin;
+    width: 2vmin;
+}
+
+.miss::after {
+    background-color: white;
+}
+
+.boom::after {
     background-color: red;
 }
 
-.miss {
-    background-color: greenyellow;
+.miss::before {
+    content: '';
+    position: absolute;
+    animation: hit .2s ease-out forwards;
+    border: 1vmin solid white;
+    border-radius: 100%;
+    width: 2vmin;
+    height: 2vmin;
+}
+
+.boom {
+animation: boom .2s ease-out forwards;
+}
+
+/* ANIMATIONS for the 'pegs' (miss or boom) */ 
+
+@keyframes hit {
+  0% {
+    opacity: 1;
+    transform: scale(0);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(4);
+  }
+}
+
+@keyframes boom {
+  0% {
+    background-color: red;
+  }
+
+  100% {
+    background-color: hsl(0, 0%, 80%);
+  }
 }
 
 /* Multiplayer styles */
+
+.player {
+    margin: 2vmin;
+  }
 
 .connected, .ready {
     font-weight: normal;
