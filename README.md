@@ -111,20 +111,27 @@ index.html is now a splash page was so that the first thing a user must do is se
 singlePlayer.html (previously index.html) is refactored: 
 
     - Since we don't need `socket.io` at all in a Single Player game, we've removed that from the html markup. 
+
     - A script now sets the `gameMode` (essential for the JS to know what functions to fire and when) at the top of the page and removes need for the Single Player and Multiplayer buttons 
+    
     - The Single Player and Multiplayer buttons are removed from the markup 
+    
     - Player 1 and Player 2 containers removed from the markup
 
 app.js is refactored: 
 
     - Removed the `gameMode` variable in app.js - this will no longer be set by the JS found there, but by the URL (the button the user clicks)
+    
     - Also removed all places the `gameMode` was being *set* in app.js - in the `startSinglePlayer` and `startMultiPlayer` function
+    
     - Event listeners and query selectors for the original buttons are removed 
+    
     - `ships` array and `creatBoard` calls had to be moved higher up in the JS (undefined errors!) 
 
 style.css is refactored: 
 
     - `grid-user` and `grid-computer` are removed, new `battleship-grid` class and rules define the look of these elements 
+    
     - CSS Grid introduced to the styles in the `battleship-grid` class, as a result the individual divs in the each player's gameboard no longer need a hardcoded width and height 
 
 ---- 
@@ -133,7 +140,7 @@ style.css is refactored:
 
 - Programmatically adding class names: 
 
-To be fair, I knew how to do this before, but this project helped me learn a lot about how to take advantage of this ability to control and style hard to reason problems. 
+To be fair, I knew how to do this before, but this project helped me learn a lot about taking advantage of this ability to control and style hard to reason problems. 
 
 For instance, when styling the ships to have a border radius on the first and last children, we add multiple class names to each of the ship divs in the JS programmatically: 
 
