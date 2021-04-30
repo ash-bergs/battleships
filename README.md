@@ -44,11 +44,12 @@ Once all the ships have been sunk, which we decide in the `checkForWins` functio
 
 ### Current Problems: 
 
-- The computer always gets a hit. The logic of the computerGo functions needs refactoring. 
+- The computer always gets a hit. The logic of the computerGo functions needs refactoring.
+> Update 4/30/21: This was solved for - the problem was in the `enemyGo` function. I was never assigning 'miss' or 'boom', just 'boom' 
 - The `checkForWins` function doesn't seem to be working. I wonder why 🤔 
-> Update: `checkForWins` wasn't working because I didn't call it anywhere.... 🤦‍♀️🤦‍♀️🤦‍♀️
+> Update 4/26/21: `checkForWins` wasn't working because I didn't call it anywhere.... 🤦‍♀️🤦‍♀️🤦‍♀️
 - When the user ships are rotated the stay in a column flow and overflow the parent div. This just looks bad and I should fix it. 
-> This was solved for in <a href="#phaseThree">Phase Three</a>
+> Update: This was solved for in <a href="#phaseThree">Phase Three</a>
 
 ----
 
@@ -85,13 +86,14 @@ Players are connected through Socket.io. Per the docs "Socket.IO is a library th
 
 There are a handful of bugs in the build right now that I need to solve for. 
 
-- In Single Player mode you can see the computer's ships. This is helpful for testing things, but silly in practice. 
+- In Single Player mode you can see the computer's ships. This is helpful for testing things, but silly in practice.
+> Update 4/29/21: This was solved for in <a href="#phaseThree">Phase Three</a>
 - There's a bug with the submarine that I can't figure out. The first div of the submarinee doesn't register as a "hit", and the square is green when it should be red. 
 
 ![submarine bug 1](https://i.ibb.co/bRD48J7/JSbattleships-submarine-bug.jpg) ![submarine bug 2](https://i.ibb.co/KzcY0C1/JSbattleships-submarine-bug2.jpg)
 
 - 👆 Because the code is such a monolith (solving for this might help me find the answer to my problem 🤔) there's a lot to dig through to solve this one. 
-> The checkForWins function was the root of the problem in this case. I was not assigning the right count to check for submarine hits (2 not 3)
+> Update 3/2021: The checkForWins function was the root of the problem in this case. I was not assigning the right count to check for submarine hits (2 not 3)
 
 ----
 
