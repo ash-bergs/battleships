@@ -134,6 +134,10 @@ style.css is refactored:
     
     - CSS Grid introduced to the styles in the `battleship-grid` class, as a result the individual divs in the each player's gameboard no longer need a hardcoded width and height 
 
+The computer no longer always gets a hit, and hits are misses are visualized with red or white "pegs." The computer's ships are now hidden in Single Player mode. 
+
+![gameplay screenshot](https://i.ibb.co/6Ytrtq0/js-Battleships-computer-Hit-Bug.jpg)
+
 ---- 
 
 ### What I've learned: 
