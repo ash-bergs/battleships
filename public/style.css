@@ -89,13 +89,14 @@ body {
     border: 1px solid hsla(0, 0%, 100%, .2);
 }
 
-.grid-display {
+/* .grid-display {
     display: flex;
-}
+} */
 
 /* hides the computer ships so the user can't see them */ 
 /* .grid-computer > .taken --> any children in the grid-computer div with class taken */ 
-.grid-computer > .taken {
+.grid-computer > .taken, 
+.grid-computer > .boom {
     background-color: hsl(200, 100%, 50%) !important;
     border-radius: 0 imp !important; 
 
@@ -294,14 +295,25 @@ info-text {
     background-color: red;
 }
 
-.miss::before {
+.miss::before, 
+.boom::before {
     content: '';
     position: absolute;
-    animation: hit .2s ease-out forwards;
-    border: 1vmin solid white;
+    border-width: 1vmin;
+    border-style: solid;
     border-radius: 100%;
     width: 2vmin;
     height: 2vmin;
+
+    animation: hit .2s ease-out forwards;
+}
+
+.boom::before {
+    border-color: red;
+}
+
+.miss::before {
+    border-color: white;
 }
 
 .boom {

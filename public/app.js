@@ -21,7 +21,10 @@ document.addEventListener("DOMContentLoaded", () => {
     // Div to see whose turn it is & info
     const turnDisplay = document.querySelector('#whose-go');
     const infoDisplay = document.querySelector('#info');
-    //* game mode buttons 
+    //* setup-buttons in single player mode 
+    const setupButtons = document.getElementById('setup-buttons'); 
+    
+    //* game mode values
     // Variables to help the game logic at the bottom 
     let isGameOver = false; 
     let currentPlayer = 'user'; 
@@ -211,7 +214,11 @@ document.addEventListener("DOMContentLoaded", () => {
         generate(shipArray[2]);
         generate(shipArray[3]);
         generate(shipArray[4]);
-        startButton.addEventListener('click', playGameSingle); 
+        startButton.addEventListener('click', () => {
+            // passing a callback function to the event listener so we can start the game and hide the setup buttons! 
+            setupButtons.style.display = 'none'; 
+            playGameSingle();  
+        }); 
     }
 
     function createBoard(grid, squares, width) {
