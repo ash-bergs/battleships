@@ -89,13 +89,14 @@ body {
     border: 1px solid hsla(0, 0%, 100%, .2);
 }
 
-.grid-display {
+/* .grid-display {
     display: flex;
-}
+} */
 
 /* hides the computer ships so the user can't see them */ 
 /* .grid-computer > .taken --> any children in the grid-computer div with class taken */ 
-.grid-computer > .taken {
+.grid-computer > .taken, 
+.grid-computer > .boom {
     background-color: hsl(200, 100%, 50%) !important;
     border-radius: 0 imp !important; 
 
