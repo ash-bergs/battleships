@@ -1,371 +1,308 @@
-/* Font family: 'Bangers', cursive; */
-/* Body font: font-family: 'Montserrat', sans-serif; */
-
 body {
     margin: 0;
-    background-color: #f3f3f3;
+    background-color: #F3F3F3;
     overflow-x: hidden;
-}
-
-/* Makes sizing all the elements a little easier to reason about */
+  }
+  
+  /* Makes sizing all the elements a little easier to reason about */
 /* font family added here to give EVERYTHING the Montserrat family unless otherwise specified */
-*, *::before, *::after {
-    box-sizing: border-box;
+  *, *::before, *::after {
     font-family: 'Montserrat', sans-serif;
-}
-
-.splash-container {
+    box-sizing: border-box;
+  }
+  
+  .splash-container {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     height: 66vh;
-}
-
-.splash-title {
+  }
+  
+  .splash-title {
     font-family: 'Bangers', cursive;
     font-size: 10rem;
-}
-
-.splash-battleship-image {
+  }
+  
+  .splash-battleship-image {
     position: absolute;
     bottom: 5vh;
     left: 20vw;
     width: 100%;
-    z-index: -10;
-    /*transform: rotateY(180deg);*/
+    transform: rotateY(180deg);
     pointer-events: none;
-    opacity: .55;
-}
-
-.btn {
+    opacity: .25;
+  }
+  
+  .btn {
     font-size: inherit;
-    /* hsl = hue, saturation, lightness */
     background-color: hsl(30, 100%, 50%);
-    padding: .5em 1em; 
-    outline: none; 
-    border: none; 
+    padding: .5em 1em;
+    outline: none;
+    border: none;
     text-decoration: none;
-    cursor: pointer; 
+    cursor: pointer;
     border-radius: .2em;
-    color: #333; 
-}
-
-.btn:hover, .btn:focus {
-    background-color: hsl(30, 100%, 35%);
-}
-
-.splash-btn {
+    color: #333;
+  }
+  
+  .btn:hover, .btn:focus {
+    background-color: hsl(30, 100%, 40%);
+  }
+  
+  .splash-btn {
     font-size: 2rem;
     margin-left: 2rem;
-}
-
-.splash-btn:first-child {
+  }
+  
+  .splash-btn:first-child {
     margin-left: 0;
-}
+  }
 
-
-/*Player Gamboards*/
-
-.container {
+  /* Player Game Boards */
+  
+  .container {
     display: flex;
     justify-content: center;
     width: 100%;
-}
-
-.battleship-grid {
+  }
+  
+  .battleship-grid {
     margin: 2vmin;
     display: grid;
     background-color: hsl(200, 100%, 50%);
     grid-template-rows: repeat(10, 4.6vmin);
     grid-template-columns: repeat(10, 4.6vmin);
-}
-
-
-.battleship-grid div {
-    /* hsla - hue, saturation, lightness, alpha model */
-    /* These colors are an extension of hsl colors with an ALPHA CHANNEL */
-    /* The alpha model defines the opacity as a number between 0.0 and 1.0 */
-    border: 1px solid hsla(0, 0%, 100%, .2);
-}
-
-/* .grid-display {
-    display: flex;
-} */
-
-/* hides the computer ships so the user can't see them */ 
-/* .grid-computer > .taken --> any children in the grid-computer div with class taken */ 
-.grid-computer > .taken, 
-.grid-computer > .boom {
+  }
+  
+  /* //! This is where my bug was 👇 */ 
+  /* the '.battleship-grid div' selector was applying rules for border, border radius, etc. */ 
+  /* using the grid-computer and the child selector >, rules are applied more SPECIFICALLY */
+  .grid-computer > .taken,
+  .grid-computer > .boom {
     background-color: hsl(200, 100%, 50%) !important;
-    border-radius: 0 imp !important; 
-
-}
-
-
-
-/* SHIPS */
-
-.taken, 
-.ship {
-    background-color: hsl(0, 0%, 80%);
-    /* position must be set to relative so that the `::before` pseudo elements (below) will be placed relative to this block*/
+    border-radius: 0 !important;
+  }
+  
+  .taken,
+  .ship {
     position: relative;
-}
-
-/* VERTICAL border radius */
-.taken.start.vertical, 
-.taken.start.vertical::before {
+    background-color: hsl(0, 0%, 80%);
+  }
+  
+  .taken.start.vertical,
+  .taken.start.vertical::before {
     border-top-left-radius: 50%;
     border-top-right-radius: 50%;
-}
-
-.taken.end.vertical, 
-.taken.end.vertical::before {
+  }
+  
+  .taken.end.vertical,
+  .taken.end.vertical::before {
     border-bottom-left-radius: 50%;
     border-bottom-right-radius: 50%;
-}
-
-/* HORIZONTAL border radius */
-
-.taken.start.horizontal, 
-.taken.start.horizontal::before {
+  }
+  
+  .taken.start.horizontal,
+  .taken.start.horizontal::before {
     border-top-left-radius: 50%;
     border-bottom-left-radius: 50%;
-}
-
-.taken.end.horizontal, 
-.taken.end.horizontal::before {
+  }
+  
+  .taken.end.horizontal,
+  .taken.end.horizontal::before {
     border-top-right-radius: 50%;
     border-bottom-right-radius: 50%;
-}
-
-/* Adds an animation effect to the ships 🚢🚢🚢 */ 
-/* using the `before` PSEUDO ELEMENT */ 
-.taken.vertical::before, 
-.taken.horizontal::before {
-    content: ""; 
+  }
+  
+  .taken.vertical::before,
+  .taken.horizontal::before {
+    content: '';
     position: absolute;
-    border: .3vmin solid white; 
-    top: -1px; 
-    left: -1px; 
-    bottom: -1px; 
+    border: .3vmin solid white;
+    top: -1px;
+    bottom: -1px;
+    left: -1px;
     right: -1px;
-}
-
-/* Gets rid of the lines in between the before element borders */ 
-.taken.vertical::before {
-    border-top: none; 
-    border-bottom: none;
-
-    animation: ripplesX 3s linear infinite;
-}
-
-.taken.horizontal::before {
+  }
+  
+  .taken.horizontal::before {
+    animation: ripplesY 3s linear infinite;
     border-left: none;
     border-right: none;
-
-    animation: ripplesY 3s linear infinite; 
-}
-
-/* actual animations code */ 
-@keyframes ripplesX {
+  }
+  
+  .taken.vertical::before {
+    animation: ripplesX 3s linear infinite;
+    border-top: none;
+    border-bottom: none;
+  }
+  
+  @keyframes ripplesX {
     0% {
-        opacity: 1;
-        transform: scaleX(1);
+      opacity: 1;
+      transform: scaleX(1);
     }
-
+  
     100% {
-        opacity: 0;
-        transform: scaleX(1.5);
+      opacity: 0;
+      transform: scaleX(1.5);
     }
-}
-
-@keyframes ripplesY {
+  }
+  
+  @keyframes ripplesY {
     0% {
-        opacity: 1;
-        transform: scaleY(1);
+      opacity: 1;
+      transform: scaleY(1);
     }
-
+  
     100% {
-        opacity: 0;
-        transform: scaleY(1.5);
+      opacity: 0;
+      transform: scaleY(1.5);
     }
-}
-
-
-/* this selector: .ship > div selects all divs inside a ship class element */
-/* this rule is set to dynamically size the user's ships, so that they're never smaller or larger than the game boards */
-.ship > div {
-    width: 4.6vmin; 
-    height: 4.6vmin; 
-}
-
-.ship {
+  }
+  
+  .grid-display {
+    display: flex;
+  }
+  
+  .ship > div {
+    width: 4.6vmin;
+    height: 4.6vmin;
+  }
+  
+  .ship {
     display: flex;
     flex-wrap: wrap;
-    margin: 1vmin; 
-    width: calc(4.6vmin * var(--width, 1)); 
-    height: calc(4.6vmin * var(--height, 1)); 
+    margin: 1vmin;
+    width: calc(4.6vmin * var(--width, 1));
+    height: calc(4.6vmin * var(--height, 1));
     border-radius: 2.3vmin;
-}
-
-.destroyer-container {
-    /* --width is a CUSTOM VARIABLE, set above in the `ship` class */
-    --width: 2; 
-}
-
-.destroyer-container-vertical {
-    --width: 1;
+  }
+  
+  .battleship-grid div {
+    border: 1px solid hsla(0, 0%, 100%, .2);
+  }
+  
+  .destroyer-container {
+    --width: 2;
+  }
+  
+  .destroyer-container-vertical {
     --height: 2;
-}
-
-.submarine-container {
-    --width: 3; 
-}
-
-.submarine-container-vertical {
     --width: 1;
-    --height: 3; 
-}
-
-.cruiser-container {
-    --width: 3; 
-}
-
-.cruiser-container-vertical {
+  }
+  
+  .submarine-container,
+  .cruiser-container {
+    --width: 3;
+  }
+  
+  .submarine-container-vertical,
+  .cruiser-container-vertical {
+    --height: 3;
     --width: 1;
-    --height: 3; 
-}
-
-.battleship-container {
-    --width: 4; 
-}
-
-.battleship-container-vertical {
+  }
+  
+  .battleship-container {
+    --width: 4;
+  }
+  
+  .battleship-container-vertical {
+    --height: 4;
     --width: 1;
-    --height: 4; 
-}
-
-.carrier-container {
-    --width: 5; 
-}
-
-.carrier-container-vertical {
+  }
+  
+  .carrier-container {
+    --width: 5;
+  }
+  
+  .carrier-container-vertical {
+    --height: 5;
     --width: 1;
-    --height: 5; 
-}
-
-/* User INFO panel - displays the rotate and start buttons, and info on whose turn it is */ 
-
-.hidden-info {
+  }
+  
+  .hidden-info {
     font-size: 1.5rem;
     align-items: center;
     flex-direction: column;
-}
-
-info-text {
+  }
+  
+  .info-text {
     margin: 1rem;
-}
-
-
-/* HIT or MISS styles - visualized during gameplay */
-
-.miss, 
-.boom {
+  }
+  
+  .miss,
+  .boom {
     display: flex;
     justify-content: center;
     align-items: center;
-}
-
-.boom::after, 
-.miss::after {
+  }
+  
+  .boom::after,
+  .miss::after {
     content: '';
     position: absolute;
     border-radius: 100%;
-    height: 2vmin;
     width: 2vmin;
-}
-
-.miss::after {
+    height: 2vmin;
+  }
+  
+  .miss::after {
     background-color: white;
-}
-
-.boom::after {
+  }
+  
+  .boom::after {
     background-color: red;
-}
-
-.miss::before, 
-.boom::before {
+  }
+  
+  .miss::before {
     content: '';
     position: absolute;
-    border-width: 1vmin;
-    border-style: solid;
+    animation: hit .2s ease-out forwards;
+    border: 1vmin solid white;
     border-radius: 100%;
     width: 2vmin;
     height: 2vmin;
-
-    animation: hit .2s ease-out forwards;
-}
-
-.boom::before {
-    border-color: red;
-}
-
-.miss::before {
-    border-color: white;
-}
-
-.boom {
-animation: boom .2s ease-out forwards;
-}
-
-/* ANIMATIONS for the 'pegs' (miss or boom) */ 
-
-@keyframes hit {
-  0% {
-    opacity: 1;
-    transform: scale(0);
   }
-
-  100% {
-    opacity: 0;
-    transform: scale(4);
+  
+  .boom {
+    animation: boom .2s ease-out forwards;
   }
-}
-
-@keyframes boom {
-  0% {
-    background-color: red;
+  
+  @keyframes hit {
+    0% {
+      opacity: 1;
+      transform: scale(0);
+    }
+  
+    100% {
+      opacity: 0;
+      transform: scale(4);
+    }
   }
-
-  100% {
-    background-color: hsl(0, 0%, 80%);
+  
+  @keyframes boom {
+    0% {
+      background-color: red;
+    }
+  
+    100% {
+      background-color: hsl(0, 0%, 80%);
+    }
   }
-}
-
-/* Multiplayer styles */
-
-.player {
+  
+  .player {
     margin: 2vmin;
   }
-
-.connected, .ready {
+  
+  .connected, .ready {
     font-weight: normal;
-}
-
-.connected span, 
-.ready span {
-    display: inline-block;
-    width: 1rem; 
-    height: 1rem;
-    background-color: red;
-}
-
-/* ! In app.js we're toggling the class list of the <span> in "connected" - adding a classname green - here will update the css so that when that classname is added by the JS, the span will become green! */
-
-span.green {
-    background-color: green;
-}
-
-
+    opacity: .25;
+    text-decoration: line-through;
+  }
+  
+  .connected.active,
+  .ready.active {
+    opacity: 1;
+    text-decoration: none;
+  }
