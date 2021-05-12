@@ -130,7 +130,10 @@ document.addEventListener("DOMContentLoaded", () => {
         socket.on("enemy-ready", num => {
             enemyReady = true; 
             playerReady(num); 
-            if (ready) playGameMulti(socket)
+            if (ready) {
+                playGameMulti(socket)
+                setupButtons.style.display = 'none'
+            }
         })
 
         // Check player status 
@@ -200,7 +203,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // depending on what connection in the `connections` array that player is occupying, their 'ready' status will be displayed in the correct html element
             let player = `.p${parseInt(num) + 1}`; 
             // use the captured string to isolate the <span> element inside the element with classname "connected" and classname "p1" or "p2" in the body 
-            document.querySelector(`${player} .connected span`).classList.toggle('green'); 
+            document.querySelector(`${player} .connected`).classList.toggle('active'); 
             // to let the the player know which player they are (1 or 2), make the font style bold
             if (parseInt(num) === playerNum) document.querySelector(player).style.fontWeight = 'bold';  
         }
@@ -439,6 +442,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // function is called several times, in different places, 
     function playGameMulti(socket) {
         // if game is over, return from the function 
+        setupButtons.style.display = "none"; 
         if (isGameOver) return; 
         if (!ready) {
             // send a message to others that a player is ready 
@@ -465,7 +469,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // console.log("check here", player);
         // we did this at the top of the document on the .connected instead of .ready class 
         // document.querySelector(`${player} .connected span`).classList.toggle('green'); 
-        document.querySelector(`${player} .ready span`).classList.toggle('green'); 
+        document.querySelector(`${player} .ready`).classList.toggle('active'); 
     }
 
     // Variables to hold the count of "hits" on different classes 
@@ -517,7 +521,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const hit = userSquares[square].classList.contains('taken')
       // if the hit variable (resolves to a boolean) ternary decides if it is a hit or a miss
       // adds the classname after resolving the expression
-      userSquares[square].classList.add(hit ? 'boom' : 'miss')
+      userSquares[square].classList.add(hit ? 'boom' : 'miss'); 
       //! part of the problem: I init'd the count variables as npcCarrierCount and so on... but here was referring to them as cpuCarrierCount 🤦‍♀️
       if (userSquares[square].classList.contains('destroyer')) npcDestroyerCount++
       if (userSquares[square].classList.contains('submarine')) npcSubmarineCount++
